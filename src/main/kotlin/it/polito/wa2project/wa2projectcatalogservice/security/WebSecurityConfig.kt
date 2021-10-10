@@ -12,10 +12,11 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
 
 @Configuration
-class WebSecurityConfig(val passwordEncoder: PasswordEncoder,
-                        val userDetailsService: UserDetailsService,
-                        val authEntryPointJwt: AuthEntryPointJwt,
-                        val jwtAuthenticationTokenFilter: JwtAuthenticationTokenFilter
+class WebSecurityConfig(
+    val passwordEncoder: PasswordEncoder,
+    val userDetailsService: UserDetailsService,
+    val authEntryPointJwt: AuthEntryPointJwt,
+    val jwtAuthenticationTokenFilter: JwtAuthenticationTokenFilter
 ): WebSecurityConfigurerAdapter() {
 
     @Bean

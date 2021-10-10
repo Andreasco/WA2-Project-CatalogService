@@ -49,7 +49,6 @@ class AuthenticationController(val userDetailsService: UserDetailsServiceImpl,
         token: String? = null
     ): ResponseEntity<UserDetailsDTO> {
         val userDTO = userDetailsService.enableUserWithToken(token!!)
-        //val responseMessage = "Great! Now your email is verified and your account is enabled."
 
         return ResponseEntity(userDTO, HttpStatus.OK)
     }

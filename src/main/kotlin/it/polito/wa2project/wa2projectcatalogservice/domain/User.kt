@@ -13,7 +13,7 @@ class User(
 
     var password: String,
 
-    @Column(unique=true)
+    @Column(unique = true)
     @Email
     var email: String,
 
