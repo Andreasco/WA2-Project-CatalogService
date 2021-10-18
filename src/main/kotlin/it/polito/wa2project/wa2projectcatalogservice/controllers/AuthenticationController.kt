@@ -19,9 +19,10 @@ import javax.validation.constraints.NotNull
 @RestController
 @RequestMapping("/auth")
 @Validated
-class AuthenticationController(val userDetailsService: UserDetailsServiceImpl,
-                               val authenticationManager: AuthenticationManager,
-                               val jwtUtils: JwtUtils
+class AuthenticationController(
+    val userDetailsService: UserDetailsServiceImpl,
+    val authenticationManager: AuthenticationManager,
+    val jwtUtils: JwtUtils
 ) {
     /**
      * This endpoint is used by user to register themselves.
