@@ -43,6 +43,9 @@ dependencies {
     // DB DRIVER
     runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 
+    // KAFKA
+    implementation("org.springframework.kafka:spring-kafka:2.7.8")
+
     // EXTRA
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
