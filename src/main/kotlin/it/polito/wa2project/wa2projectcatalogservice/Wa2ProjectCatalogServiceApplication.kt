@@ -1,12 +1,7 @@
 package it.polito.wa2project.wa2projectcatalogservice
 
-import it.polito.wa2project.wa2projectcatalogservice.domain.Customer
-import it.polito.wa2project.wa2projectcatalogservice.domain.Rolename
-import it.polito.wa2project.wa2projectcatalogservice.domain.User
-import it.polito.wa2project.wa2projectcatalogservice.domain.Wallet
 import it.polito.wa2project.wa2projectcatalogservice.repositories.CustomerRepository
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
-import it.polito.wa2project.wa2projectcatalogservice.repositories.WalletRepository
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
@@ -26,7 +21,6 @@ class Wa2ProjectCatalogServiceApplication{
     @Bean
     fun test(
         customerRepository: CustomerRepository,
-        walletRepository: WalletRepository,
         userRepository: UserRepository
     ): CommandLineRunner {
         return CommandLineRunner {
@@ -45,7 +39,7 @@ class Wa2ProjectCatalogServiceApplication{
      * perform further tests on the created entities.
      */
 
-    fun initializationTest(
+    /*fun initializationTest(
         customerRepository: CustomerRepository,
         walletRepository: WalletRepository,
         userRepository: UserRepository
@@ -114,7 +108,7 @@ class Wa2ProjectCatalogServiceApplication{
         val w22 = Wallet(customer2.get())
         walletRepository.save(w21)
         walletRepository.save(w22)
-    }
+    }*/
 }
 
 fun main(args: Array<String>) {

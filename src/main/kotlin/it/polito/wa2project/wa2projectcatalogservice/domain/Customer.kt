@@ -16,6 +16,6 @@ class Customer(
     @OneToOne(mappedBy = "customer")
     var user: User? = null,
 
-    @OneToMany(mappedBy = "customer", targetEntity = Wallet::class)
-    var wallets: MutableSet<Wallet> = mutableSetOf()
+    @ElementCollection
+    var walletsId: MutableSet<Long> = mutableSetOf()
 ): EntityBase<Long>()
