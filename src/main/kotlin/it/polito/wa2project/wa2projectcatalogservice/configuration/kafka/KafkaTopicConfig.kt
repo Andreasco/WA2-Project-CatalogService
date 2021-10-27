@@ -23,6 +23,6 @@ class KafkaTopicConfig {
 
     @Bean
     fun warehouseLoadResponseTopic(): NewTopic {
-        return NewTopic("warehouseLoadResponse", 1, 1.toShort())
+        return NewTopic("orderSagaResponse", 1, 1.toShort())
     }
 }
