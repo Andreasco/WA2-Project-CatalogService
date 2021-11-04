@@ -22,8 +22,7 @@ class CatalogController(val choreographyCatalogService: ChoreographyCatalogServi
         @RequestBody
         orderRequestDTO: OrderRequestDTO
     ): ResponseEntity<String> {
-        choreographyCatalogService.createOrder(orderRequestDTO
-        )
+        choreographyCatalogService.createOrder(orderRequestDTO)
         return ResponseEntity(HttpStatus.OK)
     }
 }
