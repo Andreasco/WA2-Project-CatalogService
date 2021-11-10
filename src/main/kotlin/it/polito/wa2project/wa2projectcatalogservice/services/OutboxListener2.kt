@@ -28,6 +28,7 @@ class OutboxListener2(val orderRequestConnector: io.debezium.config.Configuratio
     private val debeziumEngine: DebeziumEngine<RecordChangeEvent<SourceRecord>>?
 
     private fun handleChangeEvent(sourceRecordRecordChangeEvent: RecordChangeEvent<SourceRecord>) {
+        println("[+++++++++++++++++] OutboxListener Changed \n \n \n \n \n \n \n")
         val sourceRecord = sourceRecordRecordChangeEvent.record()
         val sourceRecordChangeValue = sourceRecord.value() as Struct
         if (sourceRecordChangeValue != null) {
