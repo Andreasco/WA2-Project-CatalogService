@@ -50,9 +50,9 @@ dependencies {
     implementation("org.springframework.kafka:spring-kafka:2.7.8")
 
     // DEBEZIUM
-    implementation("io.debezium:debezium-api:1.4.2.Final")
-    implementation("io.debezium:debezium-embedded:1.4.2.Final")
-    implementation("io.debezium:debezium-connector-postgres:1.4.2.Final")
+    implementation("io.debezium:debezium-api:1.7.1.Final")
+    implementation("io.debezium:debezium-embedded:1.7.1.Final")
+    implementation("io.debezium:debezium-connector-postgres:1.7.1.Final")
 
     // EXTRA
     developmentOnly("org.springframework.boot:spring-boot-devtools")

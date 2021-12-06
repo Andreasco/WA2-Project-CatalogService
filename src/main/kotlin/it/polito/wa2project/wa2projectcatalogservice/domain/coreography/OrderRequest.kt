@@ -9,6 +9,8 @@ import javax.persistence.OneToMany
 
 @Entity
 class OrderRequest (
+    private var uuid: String = UUID.randomUUID().toString()
+
     var orderId: Long?,
     var buyerId: Long?,
 
