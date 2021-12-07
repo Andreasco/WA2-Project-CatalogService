@@ -37,11 +37,22 @@ dependencies {
     // SECURITY
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("io.jsonwebtoken:jjwt-api:0.11.2")
+    implementation("org.projectlombok:lombok:1.18.20")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.11.2")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.2")
 
     // DB DRIVER
-    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    // runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    runtimeOnly("org.postgresql:postgresql")
+
+
+    // KAFKA
+    implementation("org.springframework.kafka:spring-kafka:2.7.8")
+
+    // DEBEZIUM
+    implementation("io.debezium:debezium-api:1.7.1.Final")
+    implementation("io.debezium:debezium-embedded:1.7.1.Final")
+    implementation("io.debezium:debezium-connector-postgres:1.7.1.Final")
 
     // EXTRA
     developmentOnly("org.springframework.boot:spring-boot-devtools")
