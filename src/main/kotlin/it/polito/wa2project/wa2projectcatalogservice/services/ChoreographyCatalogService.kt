@@ -2,10 +2,9 @@ package it.polito.wa2project.wa2projectcatalogservice.services
 
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderProduct
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderRequest
-import it.polito.wa2project.wa2projectcatalogservice.dto.OrderRequestDTO
-import it.polito.wa2project.wa2projectcatalogservice.dto.OrderResponseDTO
-import it.polito.wa2project.wa2projectcatalogservice.dto.OrderStatus
-import it.polito.wa2project.wa2projectcatalogservice.dto.toOrderRequestDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderResponseDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderRequestDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.toOrderRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.coreography.OrderRequestRepository
 import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
@@ -14,27 +13,23 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.concurrent.ListenableFuture
 import org.springframework.util.concurrent.ListenableFutureCallback
-import javax.persistence.OneToMany
 
 
 @Service
-class ChoreographyCatalogService( val kafkaTemplate: KafkaTemplate<String, OrderRequestDTO>,
-                                  val orderRequestRepository: OrderRequestRepository) {
+class ChoreographyCatalogService(
+    val kafkaTemplate: KafkaTemplate<String, OrderRequestDTO>,
+    val orderRequestRepository: OrderRequestRepository
+    ) {
 
-    @KafkaListener(topics = arrayOf("orderSagaResponse"), groupId = "group1")
-    fun loadOrderSagaResponse( orderResponseDTO: OrderResponseDTO) {
-        try{
-            println(orderResponseDTO)
-        } catch (e: Exception){
-            println("Exception on KafkaListener")
-        }
-        // TODO Send email to buyerId with OrderId, OrderStatus
+    fun getOrderByUuid(orderRequestUuid: String): OrderRequestDTO {
+        return orderRequestRepository.findByUuid(orderRequestUuid)!!.toOrderRequestDTO()
     }
 
     @Transactional
-    fun createOrder( orderRequest: OrderRequestDTO): OrderRequestDTO{
+    fun createOrder(orderRequest: OrderRequestDTO): OrderRequestDTO {
         val newOrderRequest =
             OrderRequest(
+                orderRequest.uuid,
                 orderRequest.orderId,
                 orderRequest.buyerId,
                 orderRequest.deliveryName,
@@ -61,9 +56,7 @@ class ChoreographyCatalogService( val kafkaTemplate: KafkaTemplate<String, Order
     }
 
     fun sendOrderRequestDTO(orderRequestDTO: OrderRequestDTO) {
-
-
-        val future: ListenableFuture<SendResult<String, OrderRequestDTO>> = kafkaTemplate.send("orderSagaRequest", orderRequestDTO)
+        val future: ListenableFuture<SendResult<String, OrderRequestDTO>> = kafkaTemplate.send("orderCatalogSagaRequest", orderRequestDTO)
         future.addCallback(object: ListenableFutureCallback<SendResult<String, OrderRequestDTO>> {
             override fun onSuccess(result: SendResult<String, OrderRequestDTO>?) {
                 println("Sent message orderRequestDTO")

@@ -1,9 +1,8 @@
 package it.polito.wa2project.wa2projectcatalogservice.controllers
 
-import it.polito.wa2project.wa2projectcatalogservice.domain.Rolename
-import it.polito.wa2project.wa2projectcatalogservice.dto.LoginRequestBodyDTO
-import it.polito.wa2project.wa2projectcatalogservice.dto.UserDetailsDTO
-import it.polito.wa2project.wa2projectcatalogservice.dto.UserRegistrationBodyDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.auth.LoginRequestBodyDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.auth.UserDetailsDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.auth.UserRegistrationBodyDTO
 import it.polito.wa2project.wa2projectcatalogservice.security.JwtUtils
 import it.polito.wa2project.wa2projectcatalogservice.services.UserDetailsServiceImpl
 import org.springframework.http.HttpStatus

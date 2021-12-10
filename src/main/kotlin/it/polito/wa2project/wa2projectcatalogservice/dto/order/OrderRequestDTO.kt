@@ -1,12 +1,11 @@
-package it.polito.wa2project.wa2projectcatalogservice.dto
+package it.polito.wa2project.wa2projectcatalogservice.dto.order
 
-import it.polito.wa2project.wa2projectcatalogservice.domain.User
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderProduct
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderRequest
 import java.math.BigInteger
 
 data class OrderRequestDTO(
-    var uuid: String?,
+    var uuid: String,
     var orderId: Long?,
     var buyerId: Long?,
 
@@ -36,6 +35,7 @@ data class OrderProductDTO(
 )
 
 fun OrderRequest.toOrderRequestDTO() = OrderRequestDTO(
+    uuid,
     orderId,
     buyerId,
     deliveryName,

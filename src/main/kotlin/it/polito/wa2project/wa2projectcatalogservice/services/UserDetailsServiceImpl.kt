@@ -3,10 +3,9 @@ package it.polito.wa2project.wa2projectcatalogservice.services
 import it.polito.wa2project.wa2projectcatalogservice.domain.Customer
 import it.polito.wa2project.wa2projectcatalogservice.domain.Rolename
 import it.polito.wa2project.wa2projectcatalogservice.domain.User
-import it.polito.wa2project.wa2projectcatalogservice.dto.UserDetailsDTO
-import it.polito.wa2project.wa2projectcatalogservice.dto.toUserDetailsDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.auth.UserDetailsDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.auth.toUserDetailsDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
@@ -126,5 +125,14 @@ class UserDetailsServiceImpl(
         user.isEnabled = isEnabled
 
         return userRepository.save(user).toUserDetailsDTO()
+    }
+
+    fun getUserById(id: Long): UserDetailsDTO{
+        val user = userRepository.findById(id)
+
+        if (user.isEmpty)
+            throw UsernameNotFoundException("Selected username is not present in the DB")
+
+        return user.get().toUserDetailsDTO()
     }
 }

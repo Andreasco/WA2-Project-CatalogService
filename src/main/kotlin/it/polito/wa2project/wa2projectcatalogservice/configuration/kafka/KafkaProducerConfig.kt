@@ -1,9 +1,7 @@
 package it.polito.wa2project.wa2projectcatalogservice.configuration.kafka
 
-import it.polito.wa2project.wa2projectcatalogservice.dto.OrderRequestDTO
-import it.polito.wa2project.wa2projectcatalogservice.dto.OrderResponseDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderRequestDTO
 import org.apache.kafka.clients.producer.ProducerConfig
-import org.apache.kafka.common.serialization.StringDeserializer
 import org.apache.kafka.common.serialization.StringSerializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean

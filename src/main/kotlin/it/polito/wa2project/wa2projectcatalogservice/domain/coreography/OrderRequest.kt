@@ -1,15 +1,14 @@
 package it.polito.wa2project.wa2projectcatalogservice.domain.coreography
 
 import it.polito.wa2project.wa2projectcatalogservice.domain.EntityBase
-import it.polito.wa2project.wa2projectcatalogservice.domain.Wallet
-import it.polito.wa2project.wa2projectcatalogservice.dto.OrderProductDTO
-import it.polito.wa2project.wa2projectcatalogservice.dto.OrderStatus
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderStatus
+import java.util.*
 import javax.persistence.Entity
 import javax.persistence.OneToMany
 
 @Entity
 class OrderRequest (
-    private var uuid: String = UUID.randomUUID().toString()
+    var uuid: String = UUID.randomUUID().toString(),
 
     var orderId: Long?,
     var buyerId: Long?,

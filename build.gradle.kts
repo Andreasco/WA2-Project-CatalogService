@@ -45,7 +45,6 @@ dependencies {
     // runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
     runtimeOnly("org.postgresql:postgresql")
 
-
     // KAFKA
     implementation("org.springframework.kafka:spring-kafka:2.7.8")
 

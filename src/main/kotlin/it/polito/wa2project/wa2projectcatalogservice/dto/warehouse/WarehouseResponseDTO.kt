@@ -1,4 +1,4 @@
-package it.polito.wa2project.wa2projectcatalogservice.dto
+package it.polito.wa2project.wa2projectcatalogservice.dto.warehouse
 
 import java.math.BigInteger
 

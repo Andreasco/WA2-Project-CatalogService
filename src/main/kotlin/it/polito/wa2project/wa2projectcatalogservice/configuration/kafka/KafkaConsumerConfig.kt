@@ -1,21 +1,28 @@
 package it.polito.wa2project.wa2projectcatalogservice.configuration.kafka
 
-import it.polito.wa2project.wa2projectcatalogservice.dto.OrderResponseDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderResponseDTO
+import it.polito.wa2project.wa2projectcatalogservice.services.ChoreographyCatalogService
+import it.polito.wa2project.wa2projectcatalogservice.services.UserDetailsServiceImpl
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.kafka.annotation.EnableKafka
+import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.support.serializer.JsonDeserializer
+import org.springframework.security.core.userdetails.UserDetailsService
 
 
 @EnableKafka
 @Configuration
-class KafkaConsumerConfig {
+class KafkaConsumerConfig(
+    val choreographyCatalogService: ChoreographyCatalogService,
+    val userDetailsService: UserDetailsServiceImpl
+    ) {
 
     @Value(value = "\${kafka.bootstrapAddress}")
     private val bootstrapAddress: String? = null
@@ -23,7 +30,17 @@ class KafkaConsumerConfig {
     @Value(value = "\${spring.kafka.consumer.group-id}")
     private val groupId: String? = null
 
+    val orderErrorCodes = mapOf(
+        1 to "You don't have enough funds in your wallet",
+        2 to "There's not enough items in stock"
+        //TODO vedere cosa manca
+    )
 
+    val orderStatusCodes = mapOf(
+        1 to "request has been received",
+        2 to "has been sent"
+        //TODO vedere cosa manca
+    )
 
     @Bean
     fun consumerFactory(): ConsumerFactory<String, OrderResponseDTO> {
@@ -40,5 +57,45 @@ class KafkaConsumerConfig {
         val factory = ConcurrentKafkaListenerContainerFactory<String, OrderResponseDTO>()
         factory.setConsumerFactory(consumerFactory())
         return factory
+    }
+
+    @KafkaListener(topics = arrayOf("orderSagaResponse"), groupId = "group1")
+    fun loadOrderSagaResponse( orderResponseDTO: OrderResponseDTO) {
+        try{
+            println(orderResponseDTO)
+        } catch (e: Exception){
+            println("Exception on KafkaListener")
+        }
+        // TODO Send email to buyerId with OrderId, OrderStatus
+    }
+
+    //Nota, il primo listener gestisce errori mentre il secondo ordini andati a buon fine
+
+    @KafkaListener(topics = arrayOf("orderWarehouseSagaResponse"), groupId = "group1")
+    fun receiveWarehouseResponse(orderResponseDTO: OrderResponseDTO) {
+        println("OrderResponse arrived from warehouseService: $orderResponseDTO")
+
+        val errorCode = orderResponseDTO.exitStatus.toInt()
+        val emailText = "Hello, we are sorry to inform you that we could not process your order because:\n${orderErrorCodes[errorCode]}"
+
+        sendOrderUpdateEmail(orderResponseDTO, emailText)
+    }
+
+    @KafkaListener(topics = arrayOf("orderSagaResponse"), groupId = "group1")
+    fun receiveOrderResponse(orderResponseDTO: OrderResponseDTO) {
+        println("OrderResponse arrived from orderService: $orderResponseDTO")
+
+        val statusCode = orderResponseDTO.exitStatus.toInt()
+        val emailText = "Hello, we are glad to inform you that your order ${orderStatusCodes[statusCode]}"
+
+        sendOrderUpdateEmail(orderResponseDTO, emailText)
+    }
+
+    private fun sendOrderUpdateEmail(orderResponseDTO: OrderResponseDTO, emailText: String){
+        val orderDTO = choreographyCatalogService.getOrderByUuid(orderResponseDTO.uuid)
+        val buyerEmail = userDetailsService.getUserById(orderDTO.buyerId!!).email
+
+        // TODO Send email to buyerId with OrderId, OrderStatus like
+        //notificationService.sendEmail(buyerEmail, emailText)
     }
 }

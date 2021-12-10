@@ -3,7 +3,7 @@ package it.polito.wa2project.wa2projectcatalogservice.security
 import io.jsonwebtoken.*
 import io.jsonwebtoken.security.Keys
 import io.jsonwebtoken.security.SignatureException
-import it.polito.wa2project.wa2projectcatalogservice.dto.UserDetailsDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.auth.UserDetailsDTO
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.Authentication
 import java.util.*
