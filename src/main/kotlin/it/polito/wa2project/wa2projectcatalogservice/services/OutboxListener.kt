@@ -1,108 +1,51 @@
-/*
+package it.polito.wa2project.wa2projectcatalogservice.services
 
 import io.debezium.data.Envelope
 import io.debezium.embedded.Connect
 import io.debezium.engine.DebeziumEngine
 import io.debezium.engine.RecordChangeEvent
 import io.debezium.engine.format.ChangeEventFormat
-import it.polito.wa2project.wa2projectcatalogservice.services.ChoreographyCatalogService
-import it.polito.wa2project.wa2projectcatalogservice.services.DbOperation
+import lombok.extern.slf4j.Slf4j
 import org.apache.commons.lang3.tuple.Pair
 import org.apache.kafka.connect.data.Field
 import org.apache.kafka.connect.data.Struct
 import org.apache.kafka.connect.source.SourceRecord
-import org.springframework.context.annotation.Configuration
 import org.springframework.stereotype.Component
+import java.io.IOException
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import java.util.function.Function
 import java.util.stream.Collectors
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
 
 
-/**
- * This class creates, starts and stops the EmbeddedEngine, which starts the Debezium engine. The engine also
- * loads and launches the connectors setup in the configuration.
- *
- *
- * The class uses @PostConstruct and @PreDestroy functions to perform needed operations.
- *
- */
+@Slf4j
 @Component
-class OutboxListener private constructor(val orderRequestConnector: io.debezium.config.Configuration, val coreographyCatalogService: ChoreographyCatalogService) {
+class OutboxListener(
+    val orderRequestConnector: io.debezium.config.Configuration,
+    val choreographyCatalogService: ChoreographyCatalogService
+    ) {
 
-
-    /**
-     * Single thread pool which will run the Debezium engine asynchronously.
-     */
     private val executor: Executor = Executors.newSingleThreadExecutor()
 
-    /**
-     * The Debezium engine which needs to be loaded with the configurations, Started and Stopped - for the
-     * CDC to work.
-     */
-    private val engine: DebeziumEngine<RecordChangeEvent<SourceRecord>>?
+    private val debeziumEngine: DebeziumEngine<RecordChangeEvent<SourceRecord>>?
 
-    /**
-     * Constructor which loads the configurations and sets a callback method 'handleEvent', which is invoked when
-     * a DataBase transactional operation is performed.
-     *
-     */
-    init {
-        println("[+++++++++++++++++] OutboxListener Init \n \n \n \n \n \n \n")
-        this.engine = DebeziumEngine.create(
-            ChangeEventFormat.of(
-                Connect::class.java
-            )
-        )
-            .using(orderRequestConnector.asProperties())
-            .notifying(this::handleEvent)
-            .build()
-    }
+    private fun handleChangeEvent(sourceRecordRecordChangeEvent: RecordChangeEvent<SourceRecord>) {
+        println("[+++++++++++++++++] OutboxListener Changed \n \n \n \n \n \n \n")
+        val sourceRecord = sourceRecordRecordChangeEvent.record()
+        val sourceRecordChangeValue = sourceRecord.value() as Struct
+        if (sourceRecordChangeValue != null) {
+            val operation = Envelope.Operation.forCode(sourceRecordChangeValue[Envelope.FieldName.OPERATION] as String)
+            if (operation != Envelope.Operation.READ) {
+                val record =
+                    if (operation == Envelope.Operation.DELETE) // Handling Update & Insert operations.
+                        Envelope.FieldName.BEFORE
+                    else
+                        Envelope.FieldName.AFTER
 
-    /**
-     * The method is called after the Debezium engine is initialized and started asynchronously using the Executor.
-     */
-    @PostConstruct
-    private fun start() {
-        println("OutboxListener started")
-        executor.execute(engine)
-    }
+                val struct = sourceRecordChangeValue[record] as Struct
 
-    /**
-     * This method is called when the container is being destroyed. This stops the debezium, merging the Executor.
-     */
-    @PreDestroy
-    private fun stop() {
-        if (this.engine != null) {
-            this.engine.close()
-        }
-    }
-
-    /**
-     * This method is invoked when a transactional action is performed on any of the tables that were configured.
-     *
-     * @param sourceRecord
-     */
-    private fun handleEvent(sourceRecordRecordChangeEvent: RecordChangeEvent<SourceRecord> ) {
-        println( "OrderRequest Event occurred")
-        val sourceRecord: SourceRecord = sourceRecordRecordChangeEvent.record()
-        val sourceRecordValue = sourceRecord.value() as Struct
-        if (sourceRecordValue != null) {
-            val operation: DbOperation = DbOperation.forCode(sourceRecordValue[Envelope.FieldName.OPERATION] as String)!!
-
-            //Only if this is a transactional operation.
-            if (operation !== DbOperation.READ) {
-                val message: Map<String, Any?>
-                var record = Envelope.FieldName.AFTER //For Update & Insert operations.
-                if (operation === DbOperation.DELETE) {
-                    record = Envelope.FieldName.BEFORE //For Delete operations.
-                }
-
-                //Build a map with all row data received.
-                val struct = sourceRecordValue[record] as Struct
-                message = struct.schema().fields().stream()
+                val payload = struct.schema().fields().stream()
                     .map { obj: Field -> obj.name() }
                     .filter { fieldName: String? -> struct[fieldName] != null }
                     .map { fieldName: String ->
@@ -113,22 +56,60 @@ class OutboxListener private constructor(val orderRequestConnector: io.debezium.
                     }
                     .collect(
                         Collectors.toMap(
-                            Function { (key): Pair<String, Any?> -> key },
-                            Function { (_, value): Pair<String, Any?> -> value })
+                            { (key): Pair<String, Any?> -> key },
+                            { (_, value): Pair<String, Any?> -> value }
+                        )
                     )
+                //TODO creare orderRequestDTO dalla mappa payload e poi inviarlo con sendOrderRequestDTO
+                //NOTA: i campi sono scritti tutti in minuscolo col _ al posto della maiuscola,
+                // quindi payload["buyer_id"] per esempio
 
-                //Call the service to handle the data change.
-                if( DbOperation.CREATE.name == operation.name) {
-                    print("Data Changed: {${message}} with Operation: {${operation.name}}, creating message")
-                    //coreographyCatalogService.sendOrderRequestDTO(message)
-                }
-                else
-                    print("Data Changed: {${message}} with Operation: {${operation.name}}, no action provided")
+                val orderRequestDTO = choreographyCatalogService.getOrderByUuid(payload["uuid"] as String)
+                /*val orderRequestDTO = OrderRequestDTO(
+                    payload["uuid"] as String,
+                    payload["order_id"] as Long,
+                    payload["buyer_id"] as Long,
+                    payload["delivery_name"] as String,
+                    payload["delivery_street"] as String,
+                    payload["delivery_zip"] as String,
+                    payload["delivery_city"] as String,
+                    payload["delivery_number"] as String,
+                    OrderStatus.fromString(payload["order_status"].toString()),
+                    payload["order_product"] as Set<OrderProductDTO>, //TODO si può fare?
+                    payload["total_price"] as Double,
+                    payload["destination_wallet_id"] as Long,
+                    payload["source_wallet_id"] as Long,
+                    payload["transaction_reason"] as String,
+                )*/
+
+                choreographyCatalogService.sendOrderRequestDTO(orderRequestDTO)
             }
         }
     }
 
+    @PostConstruct
+    private fun start() {
+        println("[+++++++++++++++++] OutboxListener Init \n \n \n \n \n \n \n")
 
+        executor.execute(debeziumEngine) //DebeziumEngine extends Runnable so it's fine
+    }
+
+    @PreDestroy
+    @Throws(IOException::class)
+    private fun stop() {
+        debeziumEngine?.close()
+    }
+
+    init {
+        println("[+++++++++++++++++] OutboxListener Init \n \n \n \n \n \n \n")
+
+        debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect::class.java))
+            .using(orderRequestConnector.asProperties())
+            .notifying { sourceRecordRecordChangeEvent: RecordChangeEvent<SourceRecord> ->
+                handleChangeEvent(
+                    sourceRecordRecordChangeEvent
+                )
+            }
+            .build()
+    }
 }
-
- */
