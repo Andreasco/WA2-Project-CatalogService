@@ -42,8 +42,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.11.2")
 
     // DB DRIVER
-    // runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
-    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("mysql:mysql-connector-java")
 
     // KAFKA
     implementation("org.springframework.kafka:spring-kafka:2.7.8")
