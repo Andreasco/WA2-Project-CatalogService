@@ -21,6 +21,7 @@ class DebeziumConfig {
             .with("database.password", "password")
             .with("database.dbname", "catalogServiceDB")
             .with("database.include.list", "catalogServiceDB")
+            .with("table.include.list", "catalogServiceDB.order_request")
             .with("include.schema.changes", "false")
             .with("database.server.id", "10181")
             .with("database.server.name", "orderrequest_mysql_db_server")
