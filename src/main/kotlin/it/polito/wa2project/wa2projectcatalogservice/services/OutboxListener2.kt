@@ -5,6 +5,9 @@ import io.debezium.embedded.Connect
 import io.debezium.engine.DebeziumEngine
 import io.debezium.engine.RecordChangeEvent
 import io.debezium.engine.format.ChangeEventFormat
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderProductDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderRequestDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderStatus
 import lombok.extern.slf4j.Slf4j
 import org.apache.commons.lang3.tuple.Pair
 import org.apache.kafka.connect.data.Field
@@ -14,7 +17,6 @@ import org.springframework.stereotype.Component
 import java.io.IOException
 import java.util.concurrent.Executor
 import java.util.concurrent.Executors
-import java.util.function.Function
 import java.util.stream.Collectors
 import javax.annotation.PostConstruct
 import javax.annotation.PreDestroy
@@ -22,7 +24,11 @@ import javax.annotation.PreDestroy
 
 @Slf4j
 @Component
-class OutboxListener2(val orderRequestConnector: io.debezium.config.Configuration, val coreographyCatalogService: ChoreographyCatalogService) {
+class OutboxListener2(
+    val orderRequestConnector: io.debezium.config.Configuration,
+    val choreographyCatalogService: ChoreographyCatalogService
+    ) {
+
     private val executor: Executor = Executors.newSingleThreadExecutor()
 
     private val debeziumEngine: DebeziumEngine<RecordChangeEvent<SourceRecord>>?
@@ -35,8 +41,13 @@ class OutboxListener2(val orderRequestConnector: io.debezium.config.Configuratio
             val operation = Envelope.Operation.forCode(sourceRecordChangeValue[Envelope.FieldName.OPERATION] as String)
             if (operation != Envelope.Operation.READ) {
                 val record =
-                    if (operation == Envelope.Operation.DELETE) Envelope.FieldName.BEFORE else Envelope.FieldName.AFTER // Handling Update & Insert operations.
+                    if (operation == Envelope.Operation.DELETE) // Handling Update & Insert operations.
+                        Envelope.FieldName.BEFORE
+                    else
+                        Envelope.FieldName.AFTER
+
                 val struct = sourceRecordChangeValue[record] as Struct
+
                 val payload = struct.schema().fields().stream()
                     .map { obj: Field -> obj.name() }
                     .filter { fieldName: String? -> struct[fieldName] != null }
@@ -48,10 +59,32 @@ class OutboxListener2(val orderRequestConnector: io.debezium.config.Configuratio
                     }
                     .collect(
                         Collectors.toMap(
-                            Function { (key): Pair<String, Any?> -> key },
-                            Function { (_, value): Pair<String, Any?> -> value })
+                            { (key): Pair<String, Any?> -> key },
+                            { (_, value): Pair<String, Any?> -> value })
                     )
-                /*customerService.replicateData(payload, operation)*/
+                //TODO creare orderRequestDTO dalla mappa payload e poi inviarlo con sendOrderRequestDTO
+                //NOTA: i campi sono scritti tutti in minuscolo col _ al posto della maiuscola,
+                // quindi payload["buyer_id"] per esempio
+
+                //TODO ho lo uuid?
+                val orderRequestDTO = OrderRequestDTO(
+                    payload["uuid"] as String,
+                    payload["order_id"] as Long,
+                    payload["buyer_id"] as Long,
+                    payload["delivery_name"] as String,
+                    payload["delivery_street"] as String,
+                    payload["delivery_zip"] as String,
+                    payload["delivery_city"] as String,
+                    payload["delivery_number"] as String,
+                    payload["order_status"] as OrderStatus, //TODO si può fare?
+                    payload["order_product"] as Set<OrderProductDTO>, //TODO si può fare?
+                    payload["total_price"] as Double,
+                    payload["destination_wallet_id"] as Long,
+                    payload["source_wallet_id"] as Long,
+                    payload["transaction_reason"] as String,
+                )
+
+                choreographyCatalogService.sendOrderRequestDTO(orderRequestDTO)
             }
         }
     }
@@ -60,25 +93,19 @@ class OutboxListener2(val orderRequestConnector: io.debezium.config.Configuratio
     private fun start() {
         println("[+++++++++++++++++] OutboxListener Init \n \n \n \n \n \n \n")
 
-        executor.execute(debeziumEngine)
+        executor.execute(debeziumEngine) //FIXME è normale?
     }
 
     @PreDestroy
     @Throws(IOException::class)
     private fun stop() {
-        if (debeziumEngine != null) {
-            debeziumEngine.close()
-        }
+        debeziumEngine?.close()
     }
 
     init {
         println("[+++++++++++++++++] OutboxListener Init \n \n \n \n \n \n \n")
 
-        debeziumEngine = DebeziumEngine.create(
-            ChangeEventFormat.of(
-                Connect::class.java
-            )
-        )
+        debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect::class.java))
             .using(orderRequestConnector.asProperties())
             .notifying { sourceRecordRecordChangeEvent: RecordChangeEvent<SourceRecord> ->
                 handleChangeEvent(
