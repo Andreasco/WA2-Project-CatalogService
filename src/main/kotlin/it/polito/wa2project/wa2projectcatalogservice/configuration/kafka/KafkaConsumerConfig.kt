@@ -38,8 +38,8 @@ class KafkaConsumerConfig(
     )
 
     val orderStatusCodes = mapOf(
-        1 to "request has been received.",
-        2 to "has been sent."
+        0 to "request has been received.",
+        1 to "has been sent."
         //TODO vedere cosa manca
     )
 
@@ -60,16 +60,6 @@ class KafkaConsumerConfig(
         return factory
     }
 
-    @KafkaListener(topics = arrayOf("orderSagaResponse"), groupId = "group1")
-    fun loadOrderSagaResponse( orderResponseDTO: OrderResponseDTO) {
-        try{
-            println(orderResponseDTO)
-        } catch (e: Exception){
-            println("Exception on KafkaListener")
-        }
-        // TODO Send email to buyerId with OrderId, OrderStatus
-    }
-
     //Nota, il primo listener gestisce errori mentre il secondo ordini andati a buon fine
 
     @KafkaListener(topics = arrayOf("orderWarehouseSagaResponse"), groupId = "group1")
@@ -84,9 +74,9 @@ class KafkaConsumerConfig(
         }
     }
 
-    @KafkaListener(topics = arrayOf("orderSagaResponse"), groupId = "group1")
+    @KafkaListener(topics = arrayOf("orderWalletSagaResponse"), groupId = "group1")
     fun receiveOrderResponse(orderResponseDTO: OrderResponseDTO) {
-        println("OrderResponse arrived from orderService: $orderResponseDTO")
+        println("OrderResponse arrived from walletService: $orderResponseDTO")
 
         val statusCode = orderResponseDTO.exitStatus.toInt()
         val emailText = "Hello, we are glad to inform you that your order ${orderStatusCodes[statusCode]}"
