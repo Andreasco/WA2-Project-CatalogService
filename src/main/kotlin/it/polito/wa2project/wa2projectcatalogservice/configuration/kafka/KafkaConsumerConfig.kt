@@ -31,14 +31,15 @@ class KafkaConsumerConfig(
     private val groupId: String? = null
 
     val orderErrorCodes = mapOf(
-        1 to "You don't have enough funds in your wallet",
-        2 to "There's not enough items in stock"
+        -1 to "of an internal error.",
+        1 to "there are not have enough funds in your wallet.",
+        2 to "there are not enough items in stock."
         //TODO vedere cosa manca
     )
 
     val orderStatusCodes = mapOf(
-        1 to "request has been received",
-        2 to "has been sent"
+        1 to "request has been received.",
+        2 to "has been sent."
         //TODO vedere cosa manca
     )
 
@@ -75,10 +76,12 @@ class KafkaConsumerConfig(
     fun receiveWarehouseResponse(orderResponseDTO: OrderResponseDTO) {
         println("OrderResponse arrived from warehouseService: $orderResponseDTO")
 
-        val errorCode = orderResponseDTO.exitStatus.toInt()
-        val emailText = "Hello, we are sorry to inform you that we could not process your order because:\n${orderErrorCodes[errorCode]}"
-
-        sendOrderUpdateEmail(orderResponseDTO, emailText)
+        if (orderResponseDTO.exitStatus != -2L) {  //if exitStatus == -2 it means that the order has been duplicated
+            val errorCode = orderResponseDTO.exitStatus.toInt()
+            val emailText =
+                "Hello, we are sorry to inform you that we could not process your order because ${orderErrorCodes[errorCode]}"
+            sendOrderUpdateEmail(orderResponseDTO, emailText)
+        }
     }
 
     @KafkaListener(topics = arrayOf("orderSagaResponse"), groupId = "group1")

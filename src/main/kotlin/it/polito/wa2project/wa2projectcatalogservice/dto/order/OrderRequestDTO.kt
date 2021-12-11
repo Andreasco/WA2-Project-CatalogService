@@ -23,8 +23,7 @@ data class OrderRequestDTO(
     var destinationWalletId: Long?,
     var sourceWalletId: Long,
 
-    var transactionReason: String?,
-    var reasonDetail: Long?
+    var transactionReason: String?
 )
 
 data class OrderProductDTO(
@@ -49,7 +48,6 @@ fun OrderRequest.toOrderRequestDTO() = OrderRequestDTO(
     destinationWalletId,
     sourceWalletId,
     transactionReason,
-    reasonDetail,
 )
 
 fun OrderProduct.toOrderProductDTO() = OrderProductDTO(

@@ -2,11 +2,9 @@ package it.polito.wa2project.wa2projectcatalogservice.services
 
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderProduct
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderRequest
-import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderResponseDTO
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.toOrderRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.coreography.OrderRequestRepository
-import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.SendResult
 import org.springframework.stereotype.Service
@@ -27,22 +25,21 @@ class ChoreographyCatalogService(
 
     @Transactional
     fun createOrder(orderRequest: OrderRequestDTO): OrderRequestDTO {
-        val newOrderRequest =
-            OrderRequest(
-                orderRequest.uuid,
-                orderRequest.orderId,
-                orderRequest.buyerId,
-                orderRequest.deliveryName,
-                orderRequest.deliveryStreet,
-                orderRequest.deliveryZip,
-                orderRequest.deliveryCity,
-                orderRequest.deliveryNumber,
-                orderRequest.status,
-                orderRequest.totalPrice,
-                orderRequest.destinationWalletId,
-                orderRequest.sourceWalletId,
-                orderRequest.transactionReason,
-                orderRequest.reasonDetail)
+        val newOrderRequest = OrderRequest(
+            orderRequest.uuid,
+            orderRequest.orderId,
+            orderRequest.buyerId,
+            orderRequest.deliveryName,
+            orderRequest.deliveryStreet,
+            orderRequest.deliveryZip,
+            orderRequest.deliveryCity,
+            orderRequest.deliveryNumber,
+            orderRequest.status,
+            orderRequest.totalPrice,
+            orderRequest.destinationWalletId,
+            orderRequest.sourceWalletId,
+            orderRequest.transactionReason,
+        )
 
         orderRequest.orderProducts.forEach{
             newOrderRequest.addOrderProduct( OrderProduct(null,
@@ -50,7 +47,8 @@ class ChoreographyCatalogService(
                 it.quantity,
                 it.purchasedProductPrice,
                 it.warehouseId )
-            )}
+            )
+        }
 
         return orderRequestRepository.save(newOrderRequest).toOrderRequestDTO()
     }

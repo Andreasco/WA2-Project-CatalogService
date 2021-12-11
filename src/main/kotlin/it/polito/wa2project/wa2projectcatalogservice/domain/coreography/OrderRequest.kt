@@ -27,7 +27,6 @@ class OrderRequest (
     var sourceWalletId: Long,
 
     var transactionReason: String?,
-    var reasonDetail: Long?,
 
     @OneToMany(mappedBy = "orderRequest", targetEntity = OrderProduct::class)
     var orderProducts: MutableSet<OrderProduct> = mutableSetOf(),
