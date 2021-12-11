@@ -3,11 +3,13 @@ package it.polito.wa2project.wa2projectcatalogservice.domain.coreography
 import it.polito.wa2project.wa2projectcatalogservice.domain.EntityBase
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderStatus
 import java.util.*
+import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.OneToMany
 
 @Entity
 class OrderRequest (
+    @Column(unique = true)
     var uuid: String = UUID.randomUUID().toString(),
 
     var orderId: Long?,
