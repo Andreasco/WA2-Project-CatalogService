@@ -14,7 +14,6 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
 import org.springframework.kafka.support.serializer.JsonDeserializer
-import org.springframework.security.core.userdetails.UserDetailsService
 
 
 @EnableKafka
@@ -62,7 +61,7 @@ class KafkaConsumerConfig(
 
     //Nota, il primo listener gestisce errori mentre il secondo ordini andati a buon fine
 
-    @KafkaListener(topics = arrayOf("orderWarehouseSagaResponse"), groupId = "group1")
+    @KafkaListener(topics = ["orderWarehouseSagaResponse"], groupId = "group1")
     fun receiveWarehouseResponse(orderResponseDTO: OrderResponseDTO) {
         println("OrderResponse arrived from warehouseService: $orderResponseDTO")
 
@@ -74,7 +73,7 @@ class KafkaConsumerConfig(
         }
     }
 
-    @KafkaListener(topics = arrayOf("orderWalletSagaResponse"), groupId = "group1")
+    @KafkaListener(topics = ["orderWalletSagaResponse"], groupId = "group1")
     fun receiveOrderResponse(orderResponseDTO: OrderResponseDTO) {
         println("OrderResponse arrived from walletService: $orderResponseDTO")
 
