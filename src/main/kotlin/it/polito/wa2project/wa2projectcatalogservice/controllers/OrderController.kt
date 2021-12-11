@@ -13,7 +13,7 @@ import javax.validation.constraints.Positive
 @Validated
 class OrderController(val choreographyCatalogService: ChoreographyCatalogService) {
 
-    @PostMapping("/add")
+    @PostMapping()
     fun addOrder(
         @RequestBody
         orderRequestDTO: OrderRequestDTO
