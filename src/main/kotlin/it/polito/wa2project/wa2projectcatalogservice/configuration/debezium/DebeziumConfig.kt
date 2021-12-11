@@ -23,7 +23,7 @@ class DebeziumConfig {
             .with("database.include.list", "catalogServiceDB")
             .with("include.schema.changes", "false")
             .with("database.server.id", "10181")
-            .with("database.server.name", "orderrequest-mysql-db-server")
+            .with("database.server.name", "orderrequest_mysql_db_server")
             .with("database.history", "io.debezium.relational.history.FileDatabaseHistory")
             .with("database.history.file.filename", "./tmp/dbhistory.dat")
             //.with("table.whitelist", "order_request")

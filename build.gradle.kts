@@ -50,7 +50,7 @@ dependencies {
     // DEBEZIUM
     implementation("io.debezium:debezium-api:1.7.1.Final")
     implementation("io.debezium:debezium-embedded:1.7.1.Final")
-    implementation("io.debezium:debezium-connector-postgres:1.7.1.Final")
+    implementation("io.debezium:debezium-connector-mysql:1.7.0.Final")
 
     // EXTRA
     developmentOnly("org.springframework.boot:spring-boot-devtools")
