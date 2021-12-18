@@ -30,6 +30,26 @@ class OutboxListener(
 
     private val debeziumEngine: DebeziumEngine<RecordChangeEvent<SourceRecord>>?
 
+    init {
+        println("[+++++++++++++++++] OutboxListener Init \n \n \n \n \n \n \n")
+
+        debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect::class.java))
+            .using(orderRequestConnector.asProperties())
+            .notifying { sourceRecordRecordChangeEvent: RecordChangeEvent<SourceRecord> ->
+                handleChangeEvent(
+                    sourceRecordRecordChangeEvent
+                )
+            }
+            .build()
+    }
+
+    @PostConstruct
+    private fun start() {
+        println("[+++++++++++++++++] OutboxListener Init \n \n \n \n \n \n \n")
+
+        executor.execute(debeziumEngine) //DebeziumEngine extends Runnable so it's fine
+    }
+
     private fun handleChangeEvent(sourceRecordRecordChangeEvent: RecordChangeEvent<SourceRecord>) {
         println("[+++++++++++++++++] OutboxListener Changed \n \n \n \n \n \n \n")
         val sourceRecord = sourceRecordRecordChangeEvent.record()
@@ -69,29 +89,9 @@ class OutboxListener(
         }
     }
 
-    @PostConstruct
-    private fun start() {
-        println("[+++++++++++++++++] OutboxListener Init \n \n \n \n \n \n \n")
-
-        executor.execute(debeziumEngine) //DebeziumEngine extends Runnable so it's fine
-    }
-
     @PreDestroy
     @Throws(IOException::class)
     private fun stop() {
         debeziumEngine?.close()
-    }
-
-    init {
-        println("[+++++++++++++++++] OutboxListener Init \n \n \n \n \n \n \n")
-
-        debeziumEngine = DebeziumEngine.create(ChangeEventFormat.of(Connect::class.java))
-            .using(orderRequestConnector.asProperties())
-            .notifying { sourceRecordRecordChangeEvent: RecordChangeEvent<SourceRecord> ->
-                handleChangeEvent(
-                    sourceRecordRecordChangeEvent
-                )
-            }
-            .build()
     }
 }

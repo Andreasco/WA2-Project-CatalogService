@@ -2,6 +2,7 @@ package it.polito.wa2project.wa2projectcatalogservice.configuration.kafka
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderResponseDTO
 import it.polito.wa2project.wa2projectcatalogservice.services.ChoreographyCatalogService
+import it.polito.wa2project.wa2projectcatalogservice.services.RestService
 import it.polito.wa2project.wa2projectcatalogservice.services.UserDetailsServiceImpl
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -20,7 +21,8 @@ import org.springframework.kafka.support.serializer.JsonDeserializer
 @Configuration
 class KafkaConsumerConfig(
     val choreographyCatalogService: ChoreographyCatalogService,
-    val userDetailsService: UserDetailsServiceImpl
+    val userDetailsService: UserDetailsServiceImpl,
+    val restService: RestService
     ) {
 
     @Value(value = "\${kafka.bootstrapAddress}")
@@ -70,7 +72,9 @@ class KafkaConsumerConfig(
             val errorCode = orderResponseDTO.exitStatus.toInt()
             val emailText =
                 "Hello, we are sorry to inform you that we could not process your order because ${orderErrorCodes[errorCode]}"
-            sendOrderUpdateEmail(orderResponseDTO, emailText)
+            val subject = "Order error"
+
+            sendOrderUpdateEmail(orderResponseDTO, subject, emailText)
         }
     }
 
@@ -80,15 +84,15 @@ class KafkaConsumerConfig(
 
         val statusCode = orderResponseDTO.exitStatus.toInt()
         val emailText = "Hello, we are glad to inform you that your order ${orderStatusCodes[statusCode]}"
+        val subject = "Order status update"
 
-        sendOrderUpdateEmail(orderResponseDTO, emailText)
+        sendOrderUpdateEmail(orderResponseDTO, subject, emailText)
     }
 
-    private fun sendOrderUpdateEmail(orderResponseDTO: OrderResponseDTO, emailText: String){
+    private fun sendOrderUpdateEmail(orderResponseDTO: OrderResponseDTO, subject: String, emailText: String){
         val orderDTO = choreographyCatalogService.getOrderByUuid(orderResponseDTO.uuid)
-        val buyerEmail = userDetailsService.getUserById(orderDTO.buyerId!!).email
+        val buyerEmail = userDetailsService.getUserById(orderDTO.buyerId!!).email!!
 
-        // TODO Send email to buyerId with OrderId, OrderStatus like
-        //notificationService.sendEmail(buyerEmail, emailText)
+        restService.sendEmail(buyerEmail, subject, emailText)
     }
 }

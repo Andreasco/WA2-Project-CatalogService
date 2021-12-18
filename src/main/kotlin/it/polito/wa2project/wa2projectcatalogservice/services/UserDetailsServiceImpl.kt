@@ -17,13 +17,9 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class UserDetailsServiceImpl(
     val userRepository: UserRepository,
-    //val mailService: MailService,
-    //val notificationService: NotificationService,
+    val restService: RestService,
     val passwordEncoder: PasswordEncoder
 ): UserDetailsService {
-    /*@Value("\${spring.mail.username}")
-    private val senderEmail: String? = null*/
-
     override fun loadUserByUsername(username: String): UserDetailsDTO {
         val user = userRepository.findByUsername(username)
             ?: throw UsernameNotFoundException("Selected username is not present in the DB")
@@ -45,8 +41,7 @@ class UserDetailsServiceImpl(
 
         val u = userRepository.saveAndFlush(newUser) // This will throw an SQLException if the email or the username are duplicate
 
-        //TODO implement notification service using external service
-        /*val emailVerificationToken = notificationService.createEmailVerificationToken(username)
+        val emailVerificationToken = restService.getEmailVerificationToken(username)
 
         //Old email message
         /*val emailConfirmationMessage =
@@ -70,17 +65,17 @@ class UserDetailsServiceImpl(
             Please follow the below link to complete the registration process.
             You will not be able to login until you do it.
             
-            http://localhost:8080/auth/registrationConfirm?token=${emailVerificationToken.getToken()}
+            http://localhost:8080/auth/registrationConfirm?token=${emailVerificationToken}
             
             Please note that this link will expire in 30 minutes.
             
             Thanks,
             The GA-team
             
-            If you did not request to sign up, please ignore this e-mail or contact us at $senderEmail and we will look into the matter.
+            If you did not request to sign up, please ignore this e-mail.
         """.trimIndent()
 
-        mailService.sendMessage(email, "Confirm your email", emailConfirmationMessage)*/
+        restService.sendEmail(email, "Confirm your email", emailConfirmationMessage)
 
         return u.toUserDetailsDTO()
     }
