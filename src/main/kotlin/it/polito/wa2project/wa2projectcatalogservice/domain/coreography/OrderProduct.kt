@@ -10,7 +10,7 @@ import javax.persistence.ManyToOne
 @Entity
 class OrderProduct (
     @ManyToOne
-    @JoinColumn(name = "orderRequestId", referencedColumnName = "id")
+    @JoinColumn(name = "orderRequest_id", referencedColumnName = "id")
     var orderRequest: OrderRequest?,
 
     var purchasedProductId: Long,             // productId of purchased product

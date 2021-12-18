@@ -14,6 +14,7 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 
 
 @Service
+@Transactional
 class ChoreographyCatalogService(
     val kafkaTemplate: KafkaTemplate<String, OrderRequestDTO>,
     val orderRequestRepository: OrderRequestRepository
@@ -23,7 +24,6 @@ class ChoreographyCatalogService(
         return orderRequestRepository.findByUuid(orderRequestUuid)!!.toOrderRequestDTO()
     }
 
-    @Transactional
     fun createOrder(orderRequest: OrderRequestDTO): OrderRequestDTO {
         val newOrderRequest = OrderRequest(
             orderRequest.orderId,

@@ -5,7 +5,7 @@ import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderReq
 import java.math.BigInteger
 
 data class OrderRequestDTO(
-    var uuid: String,
+    var uuid: String?,
     var orderId: Long?,
     var buyerId: Long?,
 

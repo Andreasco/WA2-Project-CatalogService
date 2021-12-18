@@ -3,6 +3,7 @@ package it.polito.wa2project.wa2projectcatalogservice.domain.coreography
 import it.polito.wa2project.wa2projectcatalogservice.domain.EntityBase
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderStatus
 import java.util.*
+import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.OneToMany
@@ -30,7 +31,7 @@ class OrderRequest (
     @Column(unique = true)
     var uuid: String = UUID.randomUUID().toString(),
 
-    @OneToMany(mappedBy = "orderRequest", targetEntity = OrderProduct::class)
+    @OneToMany(mappedBy = "orderRequest", cascade = arrayOf(CascadeType.ALL), targetEntity = OrderProduct::class)
     var orderProducts: MutableSet<OrderProduct> = mutableSetOf(),
     ): EntityBase<Long>() {
 

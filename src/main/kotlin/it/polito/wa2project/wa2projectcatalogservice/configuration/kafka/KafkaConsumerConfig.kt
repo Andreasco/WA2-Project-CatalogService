@@ -49,7 +49,8 @@ class KafkaConsumerConfig(
         props[ConsumerConfig.GROUP_ID_CONFIG] = groupId!!
         // props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         // props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
-        return DefaultKafkaConsumerFactory(props, StringDeserializer(), JsonDeserializer(OrderResponseDTO::class.java))
+        return DefaultKafkaConsumerFactory(props, StringDeserializer(),
+            JsonDeserializer(OrderResponseDTO::class.java).trustedPackages("*").ignoreTypeHeaders())
     }
 
     @Bean

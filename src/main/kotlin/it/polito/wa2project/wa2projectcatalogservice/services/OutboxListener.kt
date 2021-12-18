@@ -65,6 +65,8 @@ class OutboxListener(
                 // quindi payload["buyer_id"] per esempio
 
                 val orderRequestDTO = choreographyCatalogService.getOrderByUuid(payload["uuid"] as String)
+                choreographyCatalogService.sendOrderRequestDTO(orderRequestDTO)
+
                 /*val orderRequestDTO = OrderRequestDTO(
                     payload["uuid"] as String,
                     payload["order_id"] as Long,
@@ -82,7 +84,6 @@ class OutboxListener(
                     payload["transaction_reason"] as String,
                 )*/
 
-                choreographyCatalogService.sendOrderRequestDTO(orderRequestDTO)
             }
         }
     }
