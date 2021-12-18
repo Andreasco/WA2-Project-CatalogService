@@ -47,7 +47,6 @@ class JwtUtils {
 
     // FOR TEST ONLY
     fun generateJwtToken(userDetailsDTO: UserDetailsDTO): String {
-
         return Jwts.builder()
             .setSubject(userDetailsDTO.username)
             .claim("roles", userDetailsDTO.getRoles())

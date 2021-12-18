@@ -4,9 +4,11 @@ import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderPro
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderRequest
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.toOrderRequestDTO
+import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import it.polito.wa2project.wa2projectcatalogservice.repositories.coreography.OrderRequestRepository
 import org.springframework.kafka.core.KafkaTemplate
 import org.springframework.kafka.support.SendResult
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import org.springframework.util.concurrent.ListenableFuture
@@ -17,7 +19,8 @@ import org.springframework.util.concurrent.ListenableFutureCallback
 @Transactional
 class ChoreographyCatalogService(
     val kafkaTemplate: KafkaTemplate<String, OrderRequestDTO>,
-    val orderRequestRepository: OrderRequestRepository
+    val orderRequestRepository: OrderRequestRepository,
+    val userRepository: UserRepository
     ) {
 
     fun getOrderByUuid(orderRequestUuid: String): OrderRequestDTO {
@@ -25,9 +28,13 @@ class ChoreographyCatalogService(
     }
 
     fun createOrder(orderRequest: OrderRequestDTO): OrderRequestDTO {
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()
+
         val newOrderRequest = OrderRequest(
             orderRequest.orderId,
-            orderRequest.buyerId,
+            //orderRequest.buyerId, //for tests only
+            userId,
             orderRequest.deliveryName,
             orderRequest.deliveryStreet,
             orderRequest.deliveryZip,

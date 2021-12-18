@@ -60,30 +60,11 @@ class OutboxListener(
                             { (_, value): Pair<String, Any?> -> value }
                         )
                     )
-                //TODO creare orderRequestDTO dalla mappa payload e poi inviarlo con sendOrderRequestDTO
+
                 //NOTA: i campi sono scritti tutti in minuscolo col _ al posto della maiuscola,
                 // quindi payload["buyer_id"] per esempio
-
                 val orderRequestDTO = choreographyCatalogService.getOrderByUuid(payload["uuid"] as String)
                 choreographyCatalogService.sendOrderRequestDTO(orderRequestDTO)
-
-                /*val orderRequestDTO = OrderRequestDTO(
-                    payload["uuid"] as String,
-                    payload["order_id"] as Long,
-                    payload["buyer_id"] as Long,
-                    payload["delivery_name"] as String,
-                    payload["delivery_street"] as String,
-                    payload["delivery_zip"] as String,
-                    payload["delivery_city"] as String,
-                    payload["delivery_number"] as String,
-                    OrderStatus.fromString(payload["order_status"].toString()),
-                    payload["order_product"] as Set<OrderProductDTO>, //TODO si può fare?
-                    payload["total_price"] as Double,
-                    payload["destination_wallet_id"] as Long,
-                    payload["source_wallet_id"] as Long,
-                    payload["transaction_reason"] as String,
-                )*/
-
             }
         }
     }

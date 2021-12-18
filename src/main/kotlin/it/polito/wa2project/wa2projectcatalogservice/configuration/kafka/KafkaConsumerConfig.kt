@@ -66,7 +66,7 @@ class KafkaConsumerConfig(
     fun receiveWarehouseResponse(orderResponseDTO: OrderResponseDTO) {
         println("OrderResponse arrived from warehouseService: $orderResponseDTO")
 
-        if (orderResponseDTO.exitStatus != -2L) {  //if exitStatus == -2 it means that the order has been duplicated
+        if (orderResponseDTO.exitStatus != -2L) {  //if exitStatus == -2 it means that the order has been duplicated, probably by Debezium
             val errorCode = orderResponseDTO.exitStatus.toInt()
             val emailText =
                 "Hello, we are sorry to inform you that we could not process your order because ${orderErrorCodes[errorCode]}"
