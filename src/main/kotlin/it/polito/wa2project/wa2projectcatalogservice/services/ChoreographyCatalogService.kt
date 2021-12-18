@@ -26,7 +26,6 @@ class ChoreographyCatalogService(
     @Transactional
     fun createOrder(orderRequest: OrderRequestDTO): OrderRequestDTO {
         val newOrderRequest = OrderRequest(
-            orderRequest.uuid,
             orderRequest.orderId,
             orderRequest.buyerId,
             orderRequest.deliveryName,

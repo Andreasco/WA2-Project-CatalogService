@@ -55,7 +55,7 @@ class KafkaConsumerConfig(
     @Bean
     fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, OrderResponseDTO> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, OrderResponseDTO>()
-        factory.setConsumerFactory(consumerFactory())
+        factory.consumerFactory = consumerFactory()
         return factory
     }
 

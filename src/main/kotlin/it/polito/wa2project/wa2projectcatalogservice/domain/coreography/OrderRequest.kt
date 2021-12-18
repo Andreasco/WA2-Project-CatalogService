@@ -9,9 +9,6 @@ import javax.persistence.OneToMany
 
 @Entity
 class OrderRequest (
-    @Column(unique = true)
-    var uuid: String = UUID.randomUUID().toString(),
-
     var orderId: Long?,
     var buyerId: Long?,
 
@@ -29,6 +26,9 @@ class OrderRequest (
     var sourceWalletId: Long,
 
     var transactionReason: String?,
+
+    @Column(unique = true)
+    var uuid: String = UUID.randomUUID().toString(),
 
     @OneToMany(mappedBy = "orderRequest", targetEntity = OrderProduct::class)
     var orderProducts: MutableSet<OrderProduct> = mutableSetOf(),
