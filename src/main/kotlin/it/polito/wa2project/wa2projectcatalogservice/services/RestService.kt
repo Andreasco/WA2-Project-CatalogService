@@ -6,6 +6,7 @@ import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
+import org.springframework.web.client.getForObject
 import org.springframework.web.client.postForObject
 import java.util.*
 import kotlin.collections.HashMap
@@ -48,7 +49,7 @@ class RestService(restTemplateBuilder: RestTemplateBuilder) {
         println("SEND MAIL: Notification service response $response")
     }
 
-    fun getEmailVerificationToken(username: String): String {
+    fun getEmailVerificationToken(username: String): String{
         val url = "$notificationServiceURL/createToken"
 
         //Create headers
@@ -73,5 +74,11 @@ class RestService(restTemplateBuilder: RestTemplateBuilder) {
         println("GET EMAIL NOTIFICATION TOKEN: Token: $token")
 
         return token
+    }
+
+    fun getUsernameFromEmailVerificationToken(token: String): String {
+        val url = "$notificationServiceURL/validateToken?token=$token"
+
+        return restTemplate.getForObject(url)
     }
 }

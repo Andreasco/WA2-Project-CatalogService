@@ -99,8 +99,7 @@ class UserDetailsServiceImpl(
     }
 
     fun enableUserWithToken(emailToken: String): UserDetailsDTO {
-        //TODO implement notification service using external service
-        val username = "prova" //notificationService.getUsernameFromEmailVerificationToken(emailToken)
+        val username = restService.getUsernameFromEmailVerificationToken(emailToken)
         return setIsEnabled(username, true)
     }
 

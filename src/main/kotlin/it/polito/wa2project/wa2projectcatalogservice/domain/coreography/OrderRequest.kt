@@ -31,7 +31,7 @@ class OrderRequest (
     @Column(unique = true)
     var uuid: String = UUID.randomUUID().toString(),
 
-    @OneToMany(mappedBy = "orderRequest", cascade = arrayOf(CascadeType.ALL), targetEntity = OrderProduct::class)
+    @OneToMany(mappedBy = "orderRequest", cascade = [CascadeType.ALL], targetEntity = OrderProduct::class)
     var orderProducts: MutableSet<OrderProduct> = mutableSetOf(),
     ): EntityBase<Long>() {
 
