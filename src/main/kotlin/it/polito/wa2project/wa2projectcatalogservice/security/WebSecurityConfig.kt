@@ -39,7 +39,7 @@ class WebSecurityConfig(
             .addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter::class.java)
             .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         .and()
-            .authorizeRequests().antMatchers("/auth/**").permitAll()
+            .authorizeRequests().antMatchers("/auth/**", "/marketplace/**").permitAll()
             .anyRequest().authenticated()
     }
 }

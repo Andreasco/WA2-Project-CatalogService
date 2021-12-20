@@ -2,7 +2,7 @@ package it.polito.wa2project.wa2projectcatalogservice.configuration.kafka
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderResponseDTO
 import it.polito.wa2project.wa2projectcatalogservice.services.ChoreographyCatalogService
-import it.polito.wa2project.wa2projectcatalogservice.services.RestService
+import it.polito.wa2project.wa2projectcatalogservice.services.NotificationRestService
 import it.polito.wa2project.wa2projectcatalogservice.services.UserDetailsServiceImpl
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer
@@ -22,7 +22,7 @@ import org.springframework.kafka.support.serializer.JsonDeserializer
 class KafkaConsumerConfig(
     val choreographyCatalogService: ChoreographyCatalogService,
     val userDetailsService: UserDetailsServiceImpl,
-    val restService: RestService
+    val notificationRestService: NotificationRestService
     ) {
 
     @Value(value = "\${kafka.bootstrapAddress}")
@@ -93,6 +93,6 @@ class KafkaConsumerConfig(
         val orderDTO = choreographyCatalogService.getOrderByUuid(orderResponseDTO.uuid)
         val buyerEmail = userDetailsService.getUserById(orderDTO.buyerId!!).email!!
 
-        restService.sendEmail(buyerEmail, subject, emailText)
+        notificationRestService.sendEmail(buyerEmail, subject, emailText)
     }
 }

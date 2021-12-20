@@ -13,7 +13,7 @@ import kotlin.collections.HashMap
 
 
 @Service
-class RestService(restTemplateBuilder: RestTemplateBuilder) {
+class NotificationRestService(restTemplateBuilder: RestTemplateBuilder) {
     private val restTemplate: RestTemplate
 
     private val notificationServiceURL = "http://localhost:8200/notificationService"

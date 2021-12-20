@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.Transactional
 @Transactional
 class UserDetailsServiceImpl(
     val userRepository: UserRepository,
-    val restService: RestService,
+    val notificationRestService: NotificationRestService,
     val passwordEncoder: PasswordEncoder
 ): UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetailsDTO {
@@ -41,7 +41,7 @@ class UserDetailsServiceImpl(
 
         val u = userRepository.saveAndFlush(newUser) // This will throw an SQLException if the email or the username are duplicate
 
-        val emailVerificationToken = restService.getEmailVerificationToken(username)
+        val emailVerificationToken = notificationRestService.getEmailVerificationToken(username)
 
         //Old email message
         /*val emailConfirmationMessage =
@@ -75,7 +75,7 @@ class UserDetailsServiceImpl(
             If you did not request to sign up, please ignore this e-mail.
         """.trimIndent()
 
-        restService.sendEmail(email, "Confirm your email", emailConfirmationMessage)
+        notificationRestService.sendEmail(email, "Confirm your email", emailConfirmationMessage)
 
         return u.toUserDetailsDTO()
     }
@@ -99,7 +99,7 @@ class UserDetailsServiceImpl(
     }
 
     fun enableUserWithToken(emailToken: String): UserDetailsDTO {
-        val username = restService.getUsernameFromEmailVerificationToken(emailToken)
+        val username = notificationRestService.getUsernameFromEmailVerificationToken(emailToken)
         return setIsEnabled(username, true)
     }
 
