@@ -3,6 +3,7 @@ package it.polito.wa2project.wa2projectcatalogservice.services
 import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.ProductDTO
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.*
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
 import org.springframework.web.client.RestTemplate
 import org.springframework.web.client.exchange
@@ -98,7 +99,7 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         return response
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun addProduct(product: ProductDTO): String{
         //Create headers
         val headers = HttpHeaders()
@@ -120,6 +121,20 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         return response
     }
 
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun deleteProduct(productId: Long): HttpStatus{
+        val url = "$warehouseServiceURL/$productId"
+
+        //Send DELETE request
+        val response: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.DELETE)
+        val responseStatusCode = response.statusCode
+
+        println("DELETE PRODUCT: Warehouse service response $response")
+
+        return responseStatusCode
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun editProduct(newProduct: ProductDTO, productId: Long): HttpStatus{
         val url = "$warehouseServiceURL/$productId"
 
@@ -135,7 +150,7 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         //Build the request
         val entity = HttpEntity(newProduct, headers)
 
-        //Send POST request
+        //Send PUT request
         val response: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.PUT, entity)
         val responseStatusCode = response.statusCode
 
@@ -144,6 +159,7 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         return responseStatusCode
     }
 
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun uploadPicture(picture: MultipartFile, productId: Long): String{
         val url = "$warehouseServiceURL/$productId/picture"
 
