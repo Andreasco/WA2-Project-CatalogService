@@ -1,7 +1,7 @@
 package it.polito.wa2project.wa2projectcatalogservice.controllers
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.ProductDTO
-import it.polito.wa2project.wa2projectcatalogservice.services.ProductRestService
+import it.polito.wa2project.wa2projectcatalogservice.services.restServices.ProductRestService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated

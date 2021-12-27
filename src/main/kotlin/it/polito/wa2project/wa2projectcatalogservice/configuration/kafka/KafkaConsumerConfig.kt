@@ -2,7 +2,7 @@ package it.polito.wa2project.wa2projectcatalogservice.configuration.kafka
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderResponseDTO
 import it.polito.wa2project.wa2projectcatalogservice.services.ChoreographyCatalogService
-import it.polito.wa2project.wa2projectcatalogservice.services.NotificationRestService
+import it.polito.wa2project.wa2projectcatalogservice.services.restServices.NotificationRestService
 import it.polito.wa2project.wa2projectcatalogservice.services.UserDetailsServiceImpl
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.common.serialization.StringDeserializer

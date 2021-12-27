@@ -6,6 +6,7 @@ import it.polito.wa2project.wa2projectcatalogservice.domain.User
 import it.polito.wa2project.wa2projectcatalogservice.dto.auth.UserDetailsDTO
 import it.polito.wa2project.wa2projectcatalogservice.dto.auth.toUserDetailsDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
+import it.polito.wa2project.wa2projectcatalogservice.services.restServices.NotificationRestService
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException

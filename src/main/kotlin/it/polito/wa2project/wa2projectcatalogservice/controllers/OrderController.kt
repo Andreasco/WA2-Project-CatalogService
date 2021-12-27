@@ -2,6 +2,7 @@ package it.polito.wa2project.wa2projectcatalogservice.controllers
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.services.ChoreographyCatalogService
+import it.polito.wa2project.wa2projectcatalogservice.services.restServices.OrderRestService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -11,7 +12,9 @@ import javax.validation.constraints.Positive
 @RestController
 @RequestMapping("/order")
 @Validated
-class OrderController(val choreographyCatalogService: ChoreographyCatalogService) {
+class OrderController(val choreographyCatalogService: ChoreographyCatalogService,
+                      val orderRestService: OrderRestService
+) {
 
     @PostMapping()
     fun addOrder(

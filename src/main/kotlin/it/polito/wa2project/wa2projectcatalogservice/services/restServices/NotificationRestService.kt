@@ -1,4 +1,4 @@
-package it.polito.wa2project.wa2projectcatalogservice.services
+package it.polito.wa2project.wa2projectcatalogservice.services.restServices
 
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpEntity

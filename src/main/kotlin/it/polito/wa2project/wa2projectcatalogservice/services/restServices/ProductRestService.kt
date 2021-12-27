@@ -1,4 +1,4 @@
-package it.polito.wa2project.wa2projectcatalogservice.services
+package it.polito.wa2project.wa2projectcatalogservice.services.restServices
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.ProductDTO
 import org.springframework.boot.web.client.RestTemplateBuilder
