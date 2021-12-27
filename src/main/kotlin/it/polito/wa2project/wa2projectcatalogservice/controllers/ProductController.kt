@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/products")
 @Validated
 class ProductController(val productRestService: ProductRestService) {
     //TODO devo controllare se il prodotto per cui vogliono fare una operazione è stato comprato dall'utente
@@ -76,7 +76,7 @@ class ProductController(val productRestService: ProductRestService) {
         productId: Long,
 
         @RequestBody
-        @NotNull(message = "Insert a valid comment")
+        @NotNull(message = "Insert a valid product")
         newProduct: ProductDTO
     ): ResponseEntity<Any> {
         val responseStatusCode = productRestService.editProduct(newProduct, productId)
