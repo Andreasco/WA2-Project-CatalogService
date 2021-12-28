@@ -74,7 +74,7 @@ class KafkaConsumerConfig(
                 "Hello, we are sorry to inform you that we could not process your order because ${orderErrorCodes[errorCode]}"
             val subject = "Order error"
 
-            choreographyCatalogService.rollbackOrder(orderResponseDTO.orderId!!)
+            choreographyCatalogService.rollbackOrder(orderResponseDTO.uuid)
             sendOrderUpdateEmail(orderResponseDTO, subject, emailText)
         }
     }

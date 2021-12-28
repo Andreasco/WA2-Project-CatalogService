@@ -3,6 +3,7 @@ package it.polito.wa2project.wa2projectcatalogservice.services
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderProduct
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderRequest
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderRequestDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderStatus
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.toOrderRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import it.polito.wa2project.wa2projectcatalogservice.repositories.coreography.OrderRequestRepository
@@ -72,8 +73,11 @@ class ChoreographyCatalogService(
         })
     }
 
-    //TODO va bene così?
-    fun rollbackOrder(orderId: Long){
-        orderRequestRepository.deleteById(orderId)
+    fun rollbackOrder(uuid: String){
+        val orderRequest = orderRequestRepository.findByUuid(uuid)!!
+
+        orderRequest.status = OrderStatus.FAILED
+
+        orderRequestRepository.save(orderRequest)
     }
 }
