@@ -1,6 +1,8 @@
 package it.polito.wa2project.wa2projectcatalogservice.configuration.kafka
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderResponseDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.AlarmLevelDTO
+import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import it.polito.wa2project.wa2projectcatalogservice.services.ChoreographyCatalogService
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.NotificationRestService
 import it.polito.wa2project.wa2projectcatalogservice.services.UserDetailsServiceImpl
@@ -22,7 +24,8 @@ import org.springframework.kafka.support.serializer.JsonDeserializer
 class KafkaConsumerConfig(
     val choreographyCatalogService: ChoreographyCatalogService,
     val userDetailsService: UserDetailsServiceImpl,
-    val notificationRestService: NotificationRestService
+    val notificationRestService: NotificationRestService,
+    val userRepository: UserRepository
     ) {
 
     @Value(value = "\${kafka.bootstrapAddress}")
@@ -95,5 +98,18 @@ class KafkaConsumerConfig(
         val buyerEmail = userDetailsService.getUserById(orderDTO.buyerId!!).email!!
 
         notificationRestService.sendEmail(buyerEmail, subject, emailText)
+    }
+
+    @KafkaListener(topics = ["quantityLevelEmailRequest"], groupId = "group1")
+    fun receiveWarehouseEmailRequest(alarmLevelDTO: AlarmLevelDTO) {
+        println("AlarmLevelDTO arrived from warehouseService: $alarmLevelDTO")
+
+        val emailText = """
+            Hello, sorry to inform you that warehouse number ${alarmLevelDTO.warehouseId} 
+            has low quantity of ${alarmLevelDTO.productId}
+        """.trimIndent()
+
+        val adminsEmails = userRepository.findAdminsEmails()
+        adminsEmails.forEach { email -> notificationRestService.sendEmail(email, "Low quantity alert", emailText) }
     }
 }

@@ -12,16 +12,13 @@ import org.springframework.web.client.*
 import java.util.*
 
 @Service
-class WalletRestService(restTemplateBuilder: RestTemplateBuilder, userRepository: UserRepository) {
+class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userRepository: UserRepository) {
     private val restTemplate: RestTemplate
 
     private val walletServiceURL = "http://localhost:8200/walletService/wallets" //TODO cambia la porta?
-    private val userId: Long
 
     init {
         restTemplate = restTemplateBuilder.build()
-        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
-        userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
     }
 
     //TODO aggiungo anche lo userId per sicurezza?
@@ -39,6 +36,9 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, userRepository
     }
 
     fun addWallet(): String{
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
         //Create headers
         val headers = HttpHeaders()
 

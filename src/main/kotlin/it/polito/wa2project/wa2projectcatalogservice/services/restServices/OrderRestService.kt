@@ -10,19 +10,19 @@ import org.springframework.web.client.*
 import java.util.*
 
 @Service
-class OrderRestService(restTemplateBuilder: RestTemplateBuilder, userRepository: UserRepository) {
+class OrderRestService(restTemplateBuilder: RestTemplateBuilder, val userRepository: UserRepository) {
     private val restTemplate: RestTemplate
 
     private val orderServiceURL = "http://localhost:8200/orderService/orders" //TODO cambia la porta?
-    private val userId: Long
 
     init {
         restTemplate = restTemplateBuilder.build()
-        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
-        userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
     }
 
     fun getAllOrders(): String{
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
         val url = "$orderServiceURL?buyerId=$userId"
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
 
@@ -35,6 +35,9 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, userRepository:
     }
 
     fun getOrder(orderId: Long): String{
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
         //TODO Guido deve aggiungere il buyerId anche in questo caso altrimenti chiunque potrebbe richiedere qualunque ordine
         val url = "$orderServiceURL/$orderId?buyerId=$userId"
 
@@ -72,6 +75,9 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, userRepository:
     }
 
     fun deleteOrder(orderId: Long): HttpStatus {
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
         val url = "$orderServiceURL/$orderId?buyerId=$userId"
 
         //Send DELETE request
