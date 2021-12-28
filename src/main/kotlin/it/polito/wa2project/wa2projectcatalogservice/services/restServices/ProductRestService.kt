@@ -25,8 +25,9 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
 
     /* MARKETPLACE CONTROLLER *******************************************/
 
-    fun getAllProducts(): String{
-        val response: String = restTemplate.getForObject(warehouseServiceURL) //Dovrebbe contenere il JSON che mi manda warehouse
+    fun getProductsByCategory(category: String?): String{
+        val url = "$warehouseServiceURL/?category=${category ?: ""}"
+        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
 
         println("GET ALL PRODUCTS: Warehouse service response $response")
 
@@ -39,6 +40,16 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
 
         println("GET PRODUCT INFO: Warehouse service response $response")
+
+        return response
+    }
+
+    fun getProductPicture(productId: Long): String{
+        val url = "$warehouseServiceURL/$productId/picture"
+
+        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        println("GET PRODUCT PICTURE: Warehouse service response $response")
 
         return response
     }
@@ -179,6 +190,17 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         val response: String = restTemplate.postForObject(url, entity)
 
         println("UPLOAD PICTURE: Warehouse service response $response")
+
+        return response
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun getProductWarehouses(productId: Long): String{
+        val url = "$warehouseServiceURL/$productId/warehouses"
+
+        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        println("GET PRODUCT WAREHOUSES: Warehouse service response $response")
 
         return response
     }

@@ -3,10 +3,7 @@ package it.polito.wa2project.wa2projectcatalogservice.controllers
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.ProductRestService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import javax.validation.constraints.Positive
 
 @RestController
@@ -16,8 +13,11 @@ class MarketplaceController(val productRestService: ProductRestService) {
     //TODO controllare se mettere ProductDTO al posto di Any (any potrebbe servire nel caso fosse possibile
     //semplicemente inoltrare la risposta del warehouse)
     @GetMapping("/products")
-    fun getAllProducts(): ResponseEntity<String>{ //Dovrebbe contenere il JSON che mi manda warehouse
-        val productsList = productRestService.getAllProducts()
+    fun getProductsByCategory(
+        @RequestParam
+        category: String? = null,
+    ): ResponseEntity<String>{ //Dovrebbe contenere il JSON che mi manda warehouse
+        val productsList = productRestService.getProductsByCategory(category)
 
         return ResponseEntity(productsList, HttpStatus.OK)
     }
@@ -39,5 +39,16 @@ class MarketplaceController(val productRestService: ProductRestService) {
         val product = productRestService.getProductInfo(productId)
 
         return ResponseEntity(product, HttpStatus.OK)
+    }
+
+    @GetMapping("/products/{productId}/picture")
+    fun getProductPicture(
+        @PathVariable
+        @Positive(message = "Insert a valid productId")
+        productId: Long
+    ): ResponseEntity<String>{
+        val picture = productRestService.getProductPicture(productId)
+
+        return ResponseEntity(picture, HttpStatus.OK)
     }
 }

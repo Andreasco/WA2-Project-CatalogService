@@ -84,7 +84,7 @@ class ProductController(val productRestService: ProductRestService) {
         return ResponseEntity(responseStatusCode)
     }
 
-    @PutMapping("/{productId}")
+    @PostMapping("/{productId}/picture")
     fun uploadPicture(
         @PathVariable
         @Positive(message = "Insert a valid productId")
@@ -97,5 +97,16 @@ class ProductController(val productRestService: ProductRestService) {
         val response = productRestService.uploadPicture(picture, productId)
 
         return ResponseEntity(response, HttpStatus.OK)
+    }
+
+    @GetMapping("/products/{productId}/warehouses")
+    fun getProductWarehouses(
+        @PathVariable
+        @Positive(message = "Insert a valid productId")
+        productId: Long
+    ): ResponseEntity<String>{
+        val warehousesList = productRestService.getProductWarehouses(productId)
+
+        return ResponseEntity(warehousesList, HttpStatus.OK)
     }
 }
