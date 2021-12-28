@@ -71,4 +71,9 @@ class ChoreographyCatalogService(
             }
         })
     }
+
+    //TODO va bene così?
+    fun rollbackOrder(orderId: Long){
+        orderRequestRepository.deleteById(orderId)
+    }
 }
