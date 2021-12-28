@@ -16,7 +16,7 @@ import kotlin.collections.HashMap
 class NotificationRestService(restTemplateBuilder: RestTemplateBuilder) {
     private val restTemplate: RestTemplate
 
-    private val notificationServiceURL = "http://localhost:8200/notificationService"
+    private val notificationServiceURL = "http://localhost:8200/notificationService/notification"
 
     init {
         restTemplate = restTemplateBuilder.build()
