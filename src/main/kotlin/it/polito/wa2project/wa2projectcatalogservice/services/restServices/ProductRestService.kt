@@ -161,8 +161,8 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         //Build the request
         val entity = HttpEntity(newProduct, headers)
 
-        //Send PUT request
-        val response: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.PUT, entity)
+        //Send PATCH request
+        val response: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.PATCH, entity)
         val responseStatusCode = response.statusCode
 
         println("EDIT PRODUCT: Response status code $responseStatusCode")
