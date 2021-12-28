@@ -5,10 +5,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.*
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.exchange
-import org.springframework.web.client.getForObject
-import org.springframework.web.client.postForObject
+import org.springframework.web.client.*
 import java.util.*
 
 @Service
@@ -22,7 +19,10 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
     }
 
     fun getWarehouses(): String{
-        val response: String = restTemplate.getForObject(warehouseServiceURL) //Dovrebbe contenere il JSON che mi manda wallet service
+        //val response: String = restTemplate.getForObject(warehouseServiceURL) //Dovrebbe contenere il JSON che mi manda wallet service
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(warehouseServiceURL)
+        val response = responseEntity.body!!
 
         println("GET WAREHOUSES: Warehouse service response $response")
 
@@ -32,7 +32,10 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
     fun getWarehouse(warehouseId: Long): String{
         val url = "$warehouseServiceURL/$warehouseId"
 
-        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET WAREHOUSE: Warehouse service response $response")
 
@@ -54,7 +57,10 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         val entity = HttpEntity(warehouse, headers)
 
         //Send POST request
-        val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
+        //val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(warehouseServiceURL, entity)
+        val response = responseEntity.body!!
 
         println("ADD WAREHOUSE: Warehouse service response $response")
 

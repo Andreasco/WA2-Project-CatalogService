@@ -1,16 +1,14 @@
 package it.polito.wa2project.wa2projectcatalogservice.services.restServices
 
-import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.ProductDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.getForObject
-import org.springframework.web.client.postForObject
+import org.springframework.web.client.*
 import java.util.*
 
 @Service
@@ -30,7 +28,10 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, userRepository
     fun getWallet(walletId: Long): String{
         val url = "$walletServiceURL/$walletId"
 
-        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET WALLET: Wallet service response $response")
 
@@ -55,7 +56,10 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, userRepository
         val entity = HttpEntity(map, headers)
 
         //Send POST request
-        val response: String = restTemplate.postForObject(walletServiceURL, entity)
+        //val response: String = restTemplate.postForObject(walletServiceURL, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(walletServiceURL, entity)
+        val response = responseEntity.body!!
 
         println("ADD WALLET: Wallet service response $response")
 
@@ -66,7 +70,10 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, userRepository
     fun getTransactionsBetweenDate(walletId: Long, from: Long, to: Long): String{
         val url = "$walletServiceURL/$walletId/transactions?from=$from&to=$to"
 
-        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET TRANSACTIONS BETWEEN DATES: Wallet service response $response")
 
@@ -76,7 +83,10 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, userRepository
     fun getTransaction(walletId: Long, transactionId: Long): String{
         val url = "$walletServiceURL/$walletId/transactions/$transactionId"
 
-        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET TRANSACTION: Wallet service response $response")
 

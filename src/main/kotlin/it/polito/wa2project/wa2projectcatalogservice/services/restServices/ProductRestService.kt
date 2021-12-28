@@ -5,10 +5,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.*
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.exchange
-import org.springframework.web.client.getForObject
-import org.springframework.web.client.postForObject
+import org.springframework.web.client.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
 import kotlin.collections.HashMap
@@ -27,7 +24,11 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
 
     fun getProductsByCategory(category: String?): String{
         val url = "$warehouseServiceURL/?category=${category ?: ""}"
-        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET ALL PRODUCTS: Warehouse service response $response")
 
@@ -37,7 +38,10 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
     fun getProductInfo(productId: Long): String{
         val url = "$warehouseServiceURL/$productId"
 
-        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET PRODUCT INFO: Warehouse service response $response")
 
@@ -47,7 +51,10 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
     fun getProductPicture(productId: Long): String{
         val url = "$warehouseServiceURL/$productId/picture"
 
-        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET PRODUCT PICTURE: Warehouse service response $response")
 
@@ -76,11 +83,14 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         val entity = HttpEntity(map, headers)
 
         //Send POST request
-        val response: String = restTemplate.postForObject(url, entity)
+        //val response: String = restTemplate.postForObject(url, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+        val response = responseEntity.body!!
 
         println("GIVE STARS: Warehouse service response $response")
 
-        return response //TODO controllare se ritorna il JSON se metto String come valore nel postForObject
+        return response
     }
 
     fun postComment(comment: String, productId: Long): String{
@@ -103,7 +113,10 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         val entity = HttpEntity(map, headers)
 
         //Send POST request
-        val response: String = restTemplate.postForObject(url, entity)
+        //val response: String = restTemplate.postForObject(url, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+        val response = responseEntity.body!!
 
         println("POST COMMENT: Warehouse service response $response")
 
@@ -125,7 +138,10 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         val entity = HttpEntity(product, headers)
 
         //Send POST request
-        val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
+        //val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(warehouseServiceURL, entity)
+        val response = responseEntity.body!!
 
         println("ADD PRODUCT: Warehouse service response $response")
 
@@ -187,7 +203,10 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         val entity = HttpEntity(picture, headers)
 
         //Send POST request
-        val response: String = restTemplate.postForObject(url, entity)
+        //val response: String = restTemplate.postForObject(url, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+        val response = responseEntity.body!!
 
         println("UPLOAD PICTURE: Warehouse service response $response")
 
@@ -198,7 +217,10 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
     fun getProductWarehouses(productId: Long): String{
         val url = "$warehouseServiceURL/$productId/warehouses"
 
-        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET PRODUCT WAREHOUSES: Warehouse service response $response")
 

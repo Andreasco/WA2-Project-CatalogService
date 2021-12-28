@@ -6,10 +6,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.*
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
-import org.springframework.web.client.RestTemplate
-import org.springframework.web.client.exchange
-import org.springframework.web.client.getForObject
-import org.springframework.web.client.patchForObject
+import org.springframework.web.client.*
 import java.util.*
 
 @Service
@@ -26,7 +23,11 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, userRepository:
     }
 
     fun getAllOrders(): String{
-        val response: String = restTemplate.getForObject("$orderServiceURL?buyerId=$userId") //Dovrebbe contenere il JSON che mi manda warehouse
+        val url = "$orderServiceURL?buyerId=$userId"
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET ALL ORDERS: Order service response $response")
 
@@ -37,7 +38,10 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, userRepository:
         //TODO Guido deve aggiungere il buyerId anche in questo caso altrimenti chiunque potrebbe richiedere qualunque ordine
         val url = "$orderServiceURL/$orderId?buyerId=$userId"
 
-        val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+        val response = responseEntity.body!!
 
         println("GET ORDER: Order service response $response")
 

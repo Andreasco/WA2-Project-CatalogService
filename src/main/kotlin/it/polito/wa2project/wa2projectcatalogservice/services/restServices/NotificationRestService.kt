@@ -79,6 +79,10 @@ class NotificationRestService(restTemplateBuilder: RestTemplateBuilder) {
     fun getUsernameFromEmailVerificationToken(token: String): String {
         val url = "$notificationServiceURL/validateToken?token=$token"
 
-        return restTemplate.getForObject(url)
+        val username: String = restTemplate.getForObject(url)
+
+        println("GET USERNAME: Username: $token")
+
+        return username
     }
 }
