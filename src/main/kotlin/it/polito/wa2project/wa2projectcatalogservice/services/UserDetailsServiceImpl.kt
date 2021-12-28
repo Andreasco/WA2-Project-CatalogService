@@ -8,6 +8,7 @@ import it.polito.wa2project.wa2projectcatalogservice.dto.auth.toUserDetailsDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.NotificationRestService
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
@@ -122,6 +123,7 @@ class UserDetailsServiceImpl(
         return userRepository.save(user).toUserDetailsDTO()
     }
 
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun getUserById(id: Long): UserDetailsDTO{
         val user = userRepository.findById(id)
 
@@ -129,5 +131,36 @@ class UserDetailsServiceImpl(
             throw UsernameNotFoundException("Selected username is not present in the DB")
 
         return user.get().toUserDetailsDTO()
+    }
+
+    fun getLoggedUser(): UserDetailsDTO{
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
+        val user = userRepository.findById(userId)
+
+        if (user.isEmpty)
+            throw UsernameNotFoundException("Selected username is not present in the DB")
+
+        return user.get().toUserDetailsDTO()
+    }
+
+    fun updateUser(newUser: UserDetailsDTO): UserDetailsDTO{
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
+        val user = userRepository.findById(userId)
+
+        if (user.isEmpty)
+            throw UsernameNotFoundException("Selected username is not present in the DB")
+
+        val actualUser = user.get()
+
+        if (newUser.password != null) actualUser.password = newUser.password!!
+        if (newUser.email != null) actualUser.email = newUser.email!!
+
+        val updatedUser = userRepository.saveAndFlush(actualUser)
+
+        return updatedUser.toUserDetailsDTO()
     }
 }
