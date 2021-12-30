@@ -62,29 +62,34 @@ class OutboxListener(
                         Envelope.FieldName.BEFORE
                     else
                         Envelope.FieldName.AFTER
+                if (operation == Envelope.Operation.CREATE) {
+                    val struct = sourceRecordChangeValue[record] as Struct
 
-                val struct = sourceRecordChangeValue[record] as Struct
-
-                val payload = struct.schema().fields().stream()
-                    .map { obj: Field -> obj.name() }
-                    .filter { fieldName: String? -> struct[fieldName] != null }
-                    .map { fieldName: String ->
-                        Pair.of(
-                            fieldName,
-                            struct[fieldName]
+                    val payload = struct.schema().fields().stream()
+                        .map { obj: Field -> obj.name() }
+                        .filter { fieldName: String? -> struct[fieldName] != null }
+                        .map { fieldName: String ->
+                            Pair.of(
+                                fieldName,
+                                struct[fieldName]
+                            )
+                        }
+                        .collect(
+                            Collectors.toMap(
+                                { (key): Pair<String, Any?> -> key },
+                                { (_, value): Pair<String, Any?> -> value }
+                            )
                         )
-                    }
-                    .collect(
-                        Collectors.toMap(
-                            { (key): Pair<String, Any?> -> key },
-                            { (_, value): Pair<String, Any?> -> value }
-                        )
-                    )
 
-                //NOTA: i campi sono scritti tutti in minuscolo col _ al posto della maiuscola,
-                // quindi payload["buyer_id"] per esempio
-                val orderRequestDTO = choreographyCatalogService.getOrderByUuid(payload["uuid"] as String)
-                choreographyCatalogService.sendOrderRequestDTO(orderRequestDTO)
+                    //NOTA: i campi sono scritti tutti in minuscolo col _ al posto della maiuscola,
+                    // quindi payload["buyer_id"] per esempio
+
+                    val orderRequestDTO = choreographyCatalogService.getOrderByUuid(payload["uuid"] as String)
+
+                    println("OrderRequestDTO from DB on CREATE:\n$orderRequestDTO")
+
+                    choreographyCatalogService.sendOrderRequestDTO(orderRequestDTO)
+                }
             }
         }
     }
