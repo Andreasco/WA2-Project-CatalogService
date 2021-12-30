@@ -1,6 +1,5 @@
 package it.polito.wa2project.wa2projectcatalogservice.domain.coreography
 
-import it.polito.wa2project.wa2projectcatalogservice.domain.Customer
 import it.polito.wa2project.wa2projectcatalogservice.domain.EntityBase
 import java.math.BigInteger
 import javax.persistence.Entity

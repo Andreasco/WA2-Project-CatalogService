@@ -33,6 +33,6 @@ enum class OrderStatus {
         )
 
         @JsonCreator
-        fun fromString(value: String): OrderStatus? = mapping.get(value)
+        fun fromString(value: String): OrderStatus? = mapping[value]
     }
 }
