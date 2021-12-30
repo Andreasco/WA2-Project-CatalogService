@@ -1,7 +1,6 @@
 package it.polito.wa2project.wa2projectcatalogservice.controllers
 
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.WalletRestService
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -19,9 +18,8 @@ class WalletController(val walletRestService: WalletRestService) {
         @Positive(message = "Insert a valid walletId")
         walletId: Long
     ): ResponseEntity<String> {
-        val response = walletRestService.getWallet(walletId)
 
-        return ResponseEntity(response, HttpStatus.OK)
+        return walletRestService.getWallet(walletId)
     }
 
     @PostMapping("/{walletId}")
@@ -30,9 +28,8 @@ class WalletController(val walletRestService: WalletRestService) {
         @Positive(message = "Insert a valid walletId")
         walletId: Long
     ): ResponseEntity<String> {
-        val response = walletRestService.addWallet()
 
-        return ResponseEntity(response, HttpStatus.OK)
+        return walletRestService.addWallet()
     }
 
     @GetMapping("/{walletId}/transactions")
@@ -51,9 +48,8 @@ class WalletController(val walletRestService: WalletRestService) {
         @Positive(message = "Insert a valid 'to' timestamp")
         to: Long? = null
     ): ResponseEntity<String>{
-        val setOfTransaction = walletRestService.getTransactionsBetweenDate(walletId, from!!, to!!)
 
-        return ResponseEntity(setOfTransaction, HttpStatus.OK)
+        return walletRestService.getTransactionsBetweenDate(walletId, from!!, to!!)
     }
 
     @GetMapping("{walletId}/transactions/{transactionId}")
@@ -66,8 +62,7 @@ class WalletController(val walletRestService: WalletRestService) {
         @Positive(message = "Insert a valid transactionId")
         transactionId: Long,
     ): ResponseEntity<String>{
-        val response = walletRestService.getTransaction(walletId, transactionId)
 
-        return ResponseEntity(response, HttpStatus.OK)
+        return walletRestService.getTransaction(walletId, transactionId)
     }
 }

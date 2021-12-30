@@ -62,11 +62,11 @@ class NotificationRestService(restTemplateBuilder: RestTemplateBuilder) {
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
         //Create a map for post parameters
-        val map: MutableMap<String, Any> = HashMap()
-        map["username"] = username
+        //val map: MutableMap<String, Any> = HashMap()
+        //map["username"] = username
 
         //Build the request
-        val entity = HttpEntity(map, headers)
+        val entity = HttpEntity(username, headers) //Because notificationService gets a simple String
 
         //Send POST request
         val token: String = restTemplate.postForObject(url, entity)
@@ -81,7 +81,7 @@ class NotificationRestService(restTemplateBuilder: RestTemplateBuilder) {
 
         val username: String = restTemplate.getForObject(url)
 
-        println("GET USERNAME: Username: $token")
+        println("GET USERNAME: Username: $username")
 
         return username
     }

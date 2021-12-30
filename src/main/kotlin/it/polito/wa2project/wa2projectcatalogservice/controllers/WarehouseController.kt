@@ -2,7 +2,6 @@ package it.polito.wa2project.wa2projectcatalogservice.controllers
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.WarehouseDTO
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.WarehouseRestService
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -15,9 +14,8 @@ import javax.validation.constraints.Positive
 class WarehouseController(val warehouseRestService: WarehouseRestService) {
     @GetMapping
     fun getWarehouses(): ResponseEntity<String> {
-        val response = warehouseRestService.getWarehouses()
 
-        return ResponseEntity(response, HttpStatus.OK)
+        return warehouseRestService.getWarehouses()
     }
 
     @GetMapping("/{warehouseId}")
@@ -26,9 +24,8 @@ class WarehouseController(val warehouseRestService: WarehouseRestService) {
         @Positive(message = "Insert a valid warehouseId")
         warehouseId: Long
     ): ResponseEntity<String> {
-        val response = warehouseRestService.getWarehouse(warehouseId)
 
-        return ResponseEntity(response, HttpStatus.OK)
+        return warehouseRestService.getWarehouse(warehouseId)
     }
 
     @PostMapping
@@ -36,10 +33,9 @@ class WarehouseController(val warehouseRestService: WarehouseRestService) {
         @RequestBody
         @NotNull(message = "Insert a valid warehouse")
         warehouse: WarehouseDTO
-    ): ResponseEntity<Any> {
-        val newWarehouse = warehouseRestService.addWarehouse(warehouse)
+    ): ResponseEntity<String> {
 
-        return ResponseEntity(newWarehouse, HttpStatus.OK)
+        return warehouseRestService.addWarehouse(warehouse)
     }
 
     @PatchMapping("/{warehouseId}")
@@ -51,10 +47,9 @@ class WarehouseController(val warehouseRestService: WarehouseRestService) {
         @RequestBody
         @NotNull(message = "Insert a valid warehouse")
         newWarehouse: WarehouseDTO
-    ): ResponseEntity<Any> {
-        val responseStatusCode = warehouseRestService.editWarehouse(newWarehouse, warehouseId)
+    ): ResponseEntity<String> {
 
-        return ResponseEntity(responseStatusCode)
+        return warehouseRestService.editWarehouse(newWarehouse, warehouseId)
     }
 
     @DeleteMapping("/{warehouseId}")
@@ -62,9 +57,8 @@ class WarehouseController(val warehouseRestService: WarehouseRestService) {
         @PathVariable
         @Positive(message = "Insert a valid warehouseId")
         warehouseId: Long,
-    ): ResponseEntity<Any> {
-        val responseStatusCode = warehouseRestService.deleteWarehouse(warehouseId)
+    ): ResponseEntity<String> {
 
-        return ResponseEntity(responseStatusCode)
+        return warehouseRestService.deleteWarehouse(warehouseId)
     }
 }

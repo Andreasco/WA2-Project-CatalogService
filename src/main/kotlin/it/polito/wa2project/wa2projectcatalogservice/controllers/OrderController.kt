@@ -30,10 +30,9 @@ class OrderController(val choreographyCatalogService: ChoreographyCatalogService
     @GetMapping
     fun getAllOrders(
     ): ResponseEntity<String> {
-        val ordersList = orderRestService.getAllOrders()
 
-        return ResponseEntity(ordersList, HttpStatus.OK)
-    }
+        return orderRestService.getAllOrders()
+   }
 
     @GetMapping("/{orderId}")
     fun getOrder(
@@ -41,9 +40,8 @@ class OrderController(val choreographyCatalogService: ChoreographyCatalogService
         @Positive(message = "Insert a valid orderId")
         orderId: Long
     ): ResponseEntity<String> {
-        val order = orderRestService.getOrder(orderId)
 
-        return ResponseEntity(order, HttpStatus.OK)
+        return orderRestService.getOrder(orderId)
     }
 
     @PatchMapping("/{orderId}")
@@ -55,10 +53,9 @@ class OrderController(val choreographyCatalogService: ChoreographyCatalogService
         @PathVariable
         @Positive(message = "Insert a valid orderId")
         orderId: Long
-    ): ResponseEntity<OrderDTO> {
-        val updatedOrder = orderRestService.updateOrder(newOrder, orderId)
+    ): ResponseEntity<String> {
 
-        return ResponseEntity(updatedOrder, HttpStatus.OK)
+        return orderRestService.updateOrder(newOrder, orderId)
     }
 
     //TODO anche questo deve essere gestito con una saga?
@@ -67,9 +64,8 @@ class OrderController(val choreographyCatalogService: ChoreographyCatalogService
         @PathVariable
         @Positive(message = "Insert a valid orderId")
         orderId: Long
-    ): ResponseEntity<Any> {
-        val responseStatusCode = orderRestService.deleteOrder(orderId)
+    ): ResponseEntity<String> {
 
-        return ResponseEntity(responseStatusCode)
+        return orderRestService.deleteOrder(orderId)
     }
 }

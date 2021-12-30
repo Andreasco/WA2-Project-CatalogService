@@ -19,7 +19,7 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, val userReposit
         restTemplate = restTemplateBuilder.build()
     }
 
-    fun getAllOrders(): String{
+    fun getAllOrders(): ResponseEntity<String>{
         val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
         val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
 
@@ -27,14 +27,13 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, val userReposit
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
 
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
-        val response = responseEntity.body!!
 
-        println("GET ALL ORDERS: Order service response $response")
+        println("GET ALL ORDERS: Order service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 
-    fun getOrder(orderId: Long): String{
+    fun getOrder(orderId: Long): ResponseEntity<String>{
         val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
         val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
 
@@ -44,14 +43,13 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, val userReposit
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
 
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
-        val response = responseEntity.body!!
 
-        println("GET ORDER: Order service response $response")
+        println("GET ORDER: Order service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 
-    fun updateOrder(newOrder: OrderDTO, orderId: Long): OrderDTO{
+    fun updateOrder(newOrder: OrderDTO, orderId: Long): ResponseEntity<String>{
         val url = "$orderServiceURL/$orderId"
 
         //Create headers
@@ -67,25 +65,24 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, val userReposit
         val entity = HttpEntity(newOrder, headers)
 
         //Send PATCH request
-        val response: OrderDTO = restTemplate.patchForObject(url, entity)
+        val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.PATCH, entity)
 
-        println("EDIT PRODUCT: Order service response $response")
+        println("EDIT PRODUCT: Order service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 
-    fun deleteOrder(orderId: Long): HttpStatus {
+    fun deleteOrder(orderId: Long): ResponseEntity<String> {
         val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
         val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
 
         val url = "$orderServiceURL/$orderId?buyerId=$userId"
 
         //Send DELETE request
-        val response: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.DELETE)
-        val responseStatusCode = response.statusCode
+        val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.DELETE)
 
-        println("DELETE ORDER: Order service response $response")
+        println("DELETE ORDER: Order service response $responseEntity")
 
-        return responseStatusCode
+        return responseEntity
     }
 }

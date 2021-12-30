@@ -22,20 +22,19 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
     }
 
     //TODO aggiungo anche lo userId per sicurezza?
-    fun getWallet(walletId: Long): String{
+    fun getWallet(walletId: Long): ResponseEntity<String>{
         val url = "$walletServiceURL/$walletId"
 
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
 
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
-        val response = responseEntity.body!!
 
-        println("GET WALLET: Wallet service response $response")
+        println("GET WALLET: Wallet service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 
-    fun addWallet(): String{
+    fun addWallet(): ResponseEntity<String>{
         val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
         val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
 
@@ -49,47 +48,44 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
         //Create a map for post parameters
-        val map: MutableMap<String, Any> = HashMap()
-        map["userId"] = userId
+        //val map: MutableMap<String, Any> = HashMap()
+        //map["userId"] = userId
 
         //Build the request
-        val entity = HttpEntity(map, headers)
+        val entity = HttpEntity(userId, headers) //Because walletService gets a simple Long
 
         //Send POST request
         //val response: String = restTemplate.postForObject(walletServiceURL, entity)
 
         val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(walletServiceURL, entity)
-        val response = responseEntity.body!!
 
-        println("ADD WALLET: Wallet service response $response")
+        println("ADD WALLET: Wallet service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 
     //TODO aggiungo anche l'userId per essere sicuro di chi richiede le transazioni?
-    fun getTransactionsBetweenDate(walletId: Long, from: Long, to: Long): String{
+    fun getTransactionsBetweenDate(walletId: Long, from: Long, to: Long): ResponseEntity<String>{
         val url = "$walletServiceURL/$walletId/transactions?from=$from&to=$to"
 
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
 
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
-        val response = responseEntity.body!!
 
-        println("GET TRANSACTIONS BETWEEN DATES: Wallet service response $response")
+        println("GET TRANSACTIONS BETWEEN DATES: Wallet service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 
-    fun getTransaction(walletId: Long, transactionId: Long): String{
+    fun getTransaction(walletId: Long, transactionId: Long): ResponseEntity<String>{
         val url = "$walletServiceURL/$walletId/transactions/$transactionId"
 
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
 
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
-        val response = responseEntity.body!!
 
-        println("GET TRANSACTION: Wallet service response $response")
+        println("GET TRANSACTION: Wallet service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 }

@@ -18,32 +18,30 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         restTemplate = restTemplateBuilder.build()
     }
 
-    fun getWarehouses(): String{
+    fun getWarehouses(): ResponseEntity<String>{
         //val response: String = restTemplate.getForObject(warehouseServiceURL) //Dovrebbe contenere il JSON che mi manda wallet service
 
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(warehouseServiceURL)
-        val response = responseEntity.body!!
 
-        println("GET WAREHOUSES: Warehouse service response $response")
+        println("GET WAREHOUSES: Warehouse service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 
-    fun getWarehouse(warehouseId: Long): String{
+    fun getWarehouse(warehouseId: Long): ResponseEntity<String>{
         val url = "$warehouseServiceURL/$warehouseId"
 
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
 
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
-        val response = responseEntity.body!!
 
-        println("GET WAREHOUSE: Warehouse service response $response")
+        println("GET WAREHOUSE: Warehouse service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
-    fun addWarehouse(warehouse: WarehouseDTO): String{
+    fun addWarehouse(warehouseDTO: WarehouseDTO): ResponseEntity<String>{
         //Create headers
         val headers = HttpHeaders()
 
@@ -54,21 +52,20 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
         //Build the request
-        val entity = HttpEntity(warehouse, headers)
+        val entity = HttpEntity(warehouseDTO, headers)
 
         //Send POST request
         //val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
 
         val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(warehouseServiceURL, entity)
-        val response = responseEntity.body!!
 
-        println("ADD WAREHOUSE: Warehouse service response $response")
+        println("ADD WAREHOUSE: Warehouse service response $responseEntity")
 
-        return response
+        return responseEntity
     }
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
-    fun editWarehouse(newWarehouse: WarehouseDTO, warehouseId: Long): HttpStatus {
+    fun editWarehouse(newWarehouseDTO: WarehouseDTO, warehouseId: Long): ResponseEntity<String> {
         val url = "$warehouseServiceURL/$warehouseId"
 
         //Create headers
@@ -81,27 +78,25 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
         //Build the request
-        val entity = HttpEntity(newWarehouse, headers)
+        val entity = HttpEntity(newWarehouseDTO, headers)
 
         //Send PATCH request
-        val response: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.PATCH, entity)
-        val responseStatusCode = response.statusCode
+        val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.PATCH, entity)
 
-        println("EDIT WAREHOUSE: Response status code $responseStatusCode")
+        println("EDIT WAREHOUSE: Response status code $responseEntity")
 
-        return responseStatusCode
+        return responseEntity
     }
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
-    fun deleteWarehouse(warehouseId: Long): HttpStatus{
+    fun deleteWarehouse(warehouseId: Long): ResponseEntity<String>{
         val url = "$warehouseServiceURL/$warehouseId"
 
         //Send DELETE request
-        val response: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.DELETE)
-        val responseStatusCode = response.statusCode
+        val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.DELETE)
 
-        println("DELETE WAREHOUSE: Warehouse service response $response")
+        println("DELETE WAREHOUSE: Warehouse service response $responseEntity")
 
-        return responseStatusCode
+        return responseEntity
     }
 }

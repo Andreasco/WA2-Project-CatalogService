@@ -2,7 +2,6 @@ package it.polito.wa2project.wa2projectcatalogservice.controllers
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.ProductDTO
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.ProductRestService
-import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
@@ -27,9 +26,8 @@ class ProductController(val productRestService: ProductRestService) {
         @Positive(message = "Insert a valid number of stars")
         stars: Int
     ): ResponseEntity<String> {
-        val newProduct = productRestService.giveStars(stars, productId)
 
-        return ResponseEntity(newProduct, HttpStatus.OK)
+        return productRestService.giveStars(stars, productId)
     }
 
     @PostMapping("/{productId}/comment")
@@ -42,9 +40,8 @@ class ProductController(val productRestService: ProductRestService) {
         @NotNull(message = "Insert a valid comment")
         comment: String
     ): ResponseEntity<String> {
-        val newProduct = productRestService.postComment(comment, productId)
 
-        return ResponseEntity(newProduct, HttpStatus.OK)
+        return productRestService.postComment(comment, productId)
     }
 
     @PostMapping
@@ -52,10 +49,9 @@ class ProductController(val productRestService: ProductRestService) {
         @RequestBody
         @NotNull(message = "Insert a valid product")
         product: ProductDTO
-    ): ResponseEntity<Any> {
-        val newProduct = productRestService.addProduct(product)
+    ): ResponseEntity<String> {
 
-        return ResponseEntity(newProduct, HttpStatus.OK)
+        return productRestService.addProduct(product)
     }
 
     @DeleteMapping("/{productId}")
@@ -63,10 +59,9 @@ class ProductController(val productRestService: ProductRestService) {
         @PathVariable
         @Positive(message = "Insert a valid productId")
         productId: Long,
-    ): ResponseEntity<Any> {
-        val responseStatusCode = productRestService.deleteProduct(productId)
+    ): ResponseEntity<String> {
 
-        return ResponseEntity(responseStatusCode)
+        return productRestService.deleteProduct(productId)
     }
 
     @PatchMapping("/{productId}")
@@ -78,10 +73,9 @@ class ProductController(val productRestService: ProductRestService) {
         @RequestBody
         @NotNull(message = "Insert a valid product")
         newProduct: ProductDTO
-    ): ResponseEntity<Any> {
-        val responseStatusCode = productRestService.editProduct(newProduct, productId)
+    ): ResponseEntity<String> {
 
-        return ResponseEntity(responseStatusCode)
+        return productRestService.editProduct(newProduct, productId)
     }
 
     @PostMapping("/{productId}/picture")
@@ -94,9 +88,8 @@ class ProductController(val productRestService: ProductRestService) {
         @NotNull(message = "Insert a valid picture")
         picture: MultipartFile
     ): ResponseEntity<String> {
-        val response = productRestService.uploadPicture(picture, productId)
 
-        return ResponseEntity(response, HttpStatus.OK)
+        return productRestService.uploadPicture(picture, productId)
     }
 
     @GetMapping("/products/{productId}/warehouses")
@@ -105,8 +98,7 @@ class ProductController(val productRestService: ProductRestService) {
         @Positive(message = "Insert a valid productId")
         productId: Long
     ): ResponseEntity<String>{
-        val warehousesList = productRestService.getProductWarehouses(productId)
 
-        return ResponseEntity(warehousesList, HttpStatus.OK)
+        return productRestService.getProductWarehouses(productId)
     }
 }
