@@ -123,8 +123,16 @@ class UserDetailsServiceImpl(
         return userRepository.save(user).toUserDetailsDTO()
     }
 
+    fun getUserByIdInternal(id: Long): UserDetailsDTO{
+        return getUserById(id)
+    }
+
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
-    fun getUserById(id: Long): UserDetailsDTO{
+    fun getUserByIdController(id: Long): UserDetailsDTO{
+        return getUserById(id)
+    }
+
+    private fun getUserById(id: Long): UserDetailsDTO{
         val user = userRepository.findById(id)
 
         if (user.isEmpty)

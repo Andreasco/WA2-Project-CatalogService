@@ -27,7 +27,7 @@ class UserController(val userDetailsServiceImpl: UserDetailsServiceImpl) {
         @Positive(message = "Insert a valid userId")
         userId: Long
     ): ResponseEntity<UserDetailsDTO> {
-        val userDTO = userDetailsServiceImpl.getUserById(userId)
+        val userDTO = userDetailsServiceImpl.getUserByIdController(userId)
 
         return ResponseEntity(userDTO, HttpStatus.OK)
     }

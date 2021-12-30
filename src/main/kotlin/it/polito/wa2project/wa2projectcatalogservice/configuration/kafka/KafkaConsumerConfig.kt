@@ -95,7 +95,7 @@ class KafkaConsumerConfig(
 
     private fun sendOrderUpdateEmail(orderResponseDTO: OrderResponseDTO, subject: String, emailText: String){
         val orderDTO = choreographyCatalogService.getOrderByUuid(orderResponseDTO.uuid)
-        val buyerEmail = userDetailsService.getUserById(orderDTO.buyerId!!).email!!
+        val buyerEmail = userDetailsService.getUserByIdInternal(orderDTO.buyerId!!).email!!
 
         notificationRestService.sendEmail(buyerEmail, subject, emailText)
     }
