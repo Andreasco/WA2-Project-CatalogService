@@ -24,8 +24,6 @@ class MarketplaceController(val productRestService: ProductRestService) {
 
     //Eventualmente questo sarebbe il metodo per avere tutte le altre informazioni
 
-    //TODO controllare se mettere ProductDTO al posto di Any (any potrebbe servire nel caso fosse possibile
-    //semplicemente inoltrare la risposta del warehouse)
     @GetMapping("/products/{productId}")
     fun getProductInfo(
         @PathVariable

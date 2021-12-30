@@ -1,9 +1,12 @@
 package it.polito.wa2project.wa2projectcatalogservice.services.restServices
 
 import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.ProductDTO
+import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
+import it.polito.wa2project.wa2projectcatalogservice.repositories.coreography.OrderRequestRepository
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.*
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.web.client.*
 import org.springframework.web.multipart.MultipartFile
@@ -11,7 +14,10 @@ import java.util.*
 import kotlin.collections.HashMap
 
 @Service
-class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
+class ProductRestService(restTemplateBuilder: RestTemplateBuilder,
+                         val orderRequestRepository: OrderRequestRepository,
+                         val userRepository: UserRepository
+) {
     private val restTemplate: RestTemplate
 
     private val warehouseServiceURL = "http://localhost:8200/warehouseService/products" //TODO cambia la porta?
@@ -61,6 +67,9 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
     /* PRODUCT CONTROLLER ***********************************************/
 
     fun giveStars(stars: Int, productId: Long): ResponseEntity<String>{
+        if (!productBoughtByLoggedUser(productId))
+            return ResponseEntity("You cannot give stars to this product because you haven't bought it", HttpStatus.FORBIDDEN)
+
         val url = "$warehouseServiceURL/$productId/stars"
 
         //Create headers
@@ -90,6 +99,9 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
     }
 
     fun postComment(comment: String, productId: Long): ResponseEntity<String>{
+        if (!productBoughtByLoggedUser(productId))
+            return ResponseEntity("You cannot comment this product because you haven't bought it", HttpStatus.FORBIDDEN)
+
         val url = "$warehouseServiceURL/$productId/comment"
 
         //Create headers
@@ -116,6 +128,23 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder) {
         println("POST COMMENT: Warehouse service response $responseEntity")
 
         return responseEntity
+    }
+
+    //TODO ne vale la pena?
+    private fun productBoughtByLoggedUser(productId: Long): Boolean{
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
+        val orderRequestsList = orderRequestRepository.findByBuyerId(userId)
+
+        orderRequestsList.forEach { request ->
+            request.orderProducts.forEach { product ->
+                if (product.purchasedProductId == productId)
+                    return true
+            }
+        }
+
+        return false
     }
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"

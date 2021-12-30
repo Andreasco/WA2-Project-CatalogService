@@ -32,8 +32,9 @@ class OrderRequest (
     var uuid: String = UUID.randomUUID().toString(),
 
     @OneToMany(mappedBy = "orderRequest", cascade = [CascadeType.ALL], targetEntity = OrderProduct::class)
-    var orderProducts: MutableSet<OrderProduct> = mutableSetOf(),
-    ): EntityBase<Long>() {
+    var orderProducts: MutableSet<OrderProduct> = mutableSetOf()
+
+): EntityBase<Long>() {
 
     fun addOrderProduct( orderProduct: OrderProduct ){
         orderProducts.add(orderProduct)
