@@ -20,7 +20,7 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder,
 ) {
     private val restTemplate: RestTemplate
 
-    private val warehouseServiceURL = "http://localhost:8200/warehouseService/products" //TODO cambia la porta?
+    private val warehouseServiceURL = "http://localhost:8200/warehouseservice/products"
 
     init {
         restTemplate = restTemplateBuilder.build()
@@ -29,7 +29,7 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder,
     /* MARKETPLACE CONTROLLER *******************************************/
 
     fun getProductsByCategory(category: String?): ResponseEntity<String>{
-        val url = "$warehouseServiceURL/?category=${category ?: ""}"
+        val url = "$warehouseServiceURL/${("?category=$category") ?: ""}"
 
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
 

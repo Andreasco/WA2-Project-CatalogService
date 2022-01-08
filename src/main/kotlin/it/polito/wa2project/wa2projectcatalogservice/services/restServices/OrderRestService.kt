@@ -13,7 +13,7 @@ import java.util.*
 class OrderRestService(restTemplateBuilder: RestTemplateBuilder, val userRepository: UserRepository) {
     private val restTemplate: RestTemplate
 
-    private val orderServiceURL = "http://localhost:8200/orderService/orders" //TODO cambia la porta?
+    private val orderServiceURL = "http://localhost:8200/orderservice/orders"
 
     init {
         restTemplate = restTemplateBuilder.build()

@@ -15,7 +15,7 @@ import java.util.*
 class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userRepository: UserRepository) {
     private val restTemplate: RestTemplate
 
-    private val walletServiceURL = "http://localhost:8200/walletService/wallets" //TODO cambia la porta?
+    private val walletServiceURL = "http://localhost:8200/walletservice/wallets"
 
     init {
         restTemplate = restTemplateBuilder.build()

@@ -12,7 +12,7 @@ import java.util.*
 class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
     private val restTemplate: RestTemplate
 
-    private val warehouseServiceURL = "http://localhost:8200/warehouseService/warehouses" //TODO cambia la porta?
+    private val warehouseServiceURL = "http://localhost:8200/warehouseservice/warehouses"
 
     init {
         restTemplate = restTemplateBuilder.build()
