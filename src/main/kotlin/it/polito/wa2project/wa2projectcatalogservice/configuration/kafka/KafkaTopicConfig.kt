@@ -25,6 +25,12 @@ class KafkaTopicConfig {
     fun orderSagaResponseTopic(): NewTopic {
         return NewTopic("orderCatalogSagaRequest", 1, 1.toShort())
     }
+
+    @Bean
+    fun emailRequestTopic(): NewTopic {
+        return NewTopic("emailRequest", 1, 1.toShort())
+    }
+
     /**
     @Bean
     fun orderSagaRequestTopic(): NewTopic {
