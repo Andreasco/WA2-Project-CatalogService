@@ -29,7 +29,10 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder,
     /* MARKETPLACE CONTROLLER *******************************************/
 
     fun getProductsByCategory(category: String?): ResponseEntity<String>{
-        val url = "$warehouseServiceURL/${("?category=$category") ?: ""}"
+        val url = if (category == null)
+            warehouseServiceURL
+        else
+            "$warehouseServiceURL?category=$category"
 
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
 
