@@ -9,7 +9,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity
 import org.springframework.security.crypto.factory.PasswordEncoderFactories
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient
 
+@EnableEurekaClient
 @SpringBootApplication
 @EnableGlobalMethodSecurity(prePostEnabled = true) // This enables global Method Security like pre/post annotations in services
 class Wa2ProjectCatalogServiceApplication{
