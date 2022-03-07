@@ -67,7 +67,7 @@ class UserDetailsServiceImpl(
             Please follow the below link to complete the registration process.
             You will not be able to login until you do it.
             
-            http://localhost:8080/auth/registrationConfirm?token=${emailVerificationToken}
+            http://localhost:8200/catalogservice/auth/registrationConfirm?token=${emailVerificationToken}
             
             Please note that this link will expire in 30 minutes.
             
@@ -127,7 +127,7 @@ class UserDetailsServiceImpl(
         return getUserById(id)
     }
 
-    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    // @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun getUserByIdController(id: Long): UserDetailsDTO{
         return getUserById(id)
     }

@@ -22,13 +22,8 @@ class WalletController(val walletRestService: WalletRestService) {
         return walletRestService.getWallet(walletId)
     }
 
-    @PostMapping("/{walletId}")
-    fun addWallet(
-        @PathVariable
-        @Positive(message = "Insert a valid walletId")
-        walletId: Long
-    ): ResponseEntity<String> {
-
+    @PostMapping
+    fun addWallet(): ResponseEntity<String> {
         return walletRestService.addWallet()
     }
 
