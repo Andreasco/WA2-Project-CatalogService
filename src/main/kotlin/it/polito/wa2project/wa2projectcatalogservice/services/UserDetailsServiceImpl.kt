@@ -4,7 +4,9 @@ import it.polito.wa2project.wa2projectcatalogservice.domain.Customer
 import it.polito.wa2project.wa2projectcatalogservice.domain.Rolename
 import it.polito.wa2project.wa2projectcatalogservice.domain.User
 import it.polito.wa2project.wa2projectcatalogservice.dto.auth.UserDetailsDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.auth.UserPublicDTO
 import it.polito.wa2project.wa2projectcatalogservice.dto.auth.toUserDetailsDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.auth.toUserPublicDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.NotificationRestService
 import org.springframework.security.access.prepost.PreAuthorize
@@ -82,6 +84,35 @@ class UserDetailsServiceImpl(
         return u.toUserDetailsDTO()
     }
 
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun addRole(userId: Long, rolename: Rolename): UserPublicDTO {
+        val user = userRepository.findById(userId)
+
+        if(user.isEmpty)
+            throw UsernameNotFoundException("Selected username is not present in the DB")
+
+        val actualUser = user.get()
+
+        actualUser.addRolename(rolename)
+
+        return userRepository.save(actualUser).toUserPublicDTO()
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun removeRole(userId: Long, rolename: Rolename): UserPublicDTO {
+        val user = userRepository.findById(userId)
+
+        if(user.isEmpty)
+            throw UsernameNotFoundException("Selected username is not present in the DB")
+
+        val actualUser = user.get()
+
+        actualUser.removeRolename(rolename)
+
+        return userRepository.save(actualUser).toUserPublicDTO()
+    }
+
+    /* IN THE CASE THE TWO ABOVE DON'T WORK
     fun addRole(username: String, rolename: Rolename): UserDetailsDTO {
         val user = userRepository.findByUsername(username)
             ?: throw UsernameNotFoundException("Selected username is not present in the DB")
@@ -98,7 +129,7 @@ class UserDetailsServiceImpl(
         user.removeRolename(rolename)
 
         return userRepository.save(user).toUserDetailsDTO()
-    }
+    }*/
 
     fun enableUserWithToken(emailToken: String): UserDetailsDTO {
         val username = notificationRestService.getUsernameFromEmailVerificationToken(emailToken)
@@ -127,7 +158,7 @@ class UserDetailsServiceImpl(
         return getUserById(id)
     }
 
-    // @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun getUserByIdController(id: Long): UserDetailsDTO{
         return getUserById(id)
     }
@@ -141,7 +172,7 @@ class UserDetailsServiceImpl(
         return user.get().toUserDetailsDTO()
     }
 
-    fun getLoggedUser(): UserDetailsDTO{
+    fun getLoggedUser(): UserPublicDTO {
         val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
         val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
 
@@ -150,10 +181,10 @@ class UserDetailsServiceImpl(
         if (user.isEmpty)
             throw UsernameNotFoundException("Selected username is not present in the DB")
 
-        return user.get().toUserDetailsDTO()
+        return user.get().toUserPublicDTO()
     }
 
-    fun updateUser(newUser: UserDetailsDTO): UserDetailsDTO{
+    fun updateUser(newUser: UserPublicDTO): UserPublicDTO{
         val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
         val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
 
@@ -164,11 +195,11 @@ class UserDetailsServiceImpl(
 
         val actualUser = user.get()
 
-        if (newUser.password != null) actualUser.password = newUser.password!!
+        if (newUser.username != null) actualUser.username = newUser.username!!
         if (newUser.email != null) actualUser.email = newUser.email!!
 
         val updatedUser = userRepository.saveAndFlush(actualUser)
 
-        return updatedUser.toUserDetailsDTO()
+        return updatedUser.toUserPublicDTO()
     }
 }
