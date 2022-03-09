@@ -94,7 +94,7 @@ class ProductController(val productRestService: ProductRestService) {
         return productRestService.uploadPicture(picture, productId)
     }
 
-    @GetMapping("/products/{productId}/warehouses")
+    @GetMapping("/{productId}/warehouses")
     fun getProductWarehouses(
         @PathVariable
         @Positive(message = "Insert a valid productId")

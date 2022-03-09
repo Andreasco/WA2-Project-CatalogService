@@ -87,7 +87,8 @@ class KafkaConsumerConfig(
         println("OrderResponse arrived from walletService: $orderResponseDTO")
 
         val statusCode = orderResponseDTO.exitStatus.toInt()
-        val emailText = "Hello, we are glad to inform you that your order ${orderStatusCodes[statusCode]}"
+        val orderId = orderResponseDTO.orderId
+        val emailText = "Hello, we are glad to inform you that your order with ID $orderId ${orderStatusCodes[statusCode]}"
         val subject = "Order status update"
 
         sendOrderUpdateEmail(orderResponseDTO, subject, emailText)
