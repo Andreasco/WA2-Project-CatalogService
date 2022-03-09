@@ -28,8 +28,6 @@ class ProductController(val productRestService: ProductRestService) {
         return productRestService.postComment(commentDTO, productId)
     }
 
-    //TODO aggiungere endpoint LoadProduct, UnloadProduct e storage (controllare il controller per vedere cosa manca)
-
     @PostMapping
     fun addProduct(
         @RequestBody
