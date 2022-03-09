@@ -44,6 +44,8 @@ class ProductController(val productRestService: ProductRestService) {
         return productRestService.postComment(comment, productId)
     }
 
+    //TODO aggiungere endpoint @PostMapping("/storage")
+
     @PostMapping
     fun addProduct(
         @RequestBody

@@ -18,6 +18,7 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         restTemplate = restTemplateBuilder.build()
     }
 
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun getWarehouses(): ResponseEntity<String>{
         //val response: String = restTemplate.getForObject(warehouseServiceURL) //Dovrebbe contenere il JSON che mi manda wallet service
 
@@ -28,6 +29,7 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         return responseEntity
     }
 
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun getWarehouse(warehouseId: Long): ResponseEntity<String>{
         val url = "$warehouseServiceURL/$warehouseId"
 

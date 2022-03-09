@@ -21,9 +21,11 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
         restTemplate = restTemplateBuilder.build()
     }
 
-    //TODO aggiungo anche lo userId per sicurezza?
     fun getWallet(walletId: Long): ResponseEntity<String>{
-        val url = "$walletServiceURL/$walletId"
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
+        val url = "$walletServiceURL/$walletId/$userId"
 
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
 
