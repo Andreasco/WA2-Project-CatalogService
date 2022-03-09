@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service
 import org.springframework.web.client.*
 import org.springframework.web.multipart.MultipartFile
 import java.util.*
-import kotlin.collections.HashMap
 
 @Service
 class ProductRestService(
