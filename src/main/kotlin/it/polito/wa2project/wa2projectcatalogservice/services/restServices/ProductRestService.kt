@@ -152,6 +152,29 @@ class ProductRestService(
     }
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun updateOrCreateProduct(productId: Long, product: ProductDTO): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$productId"
+
+        //Create headers
+        val headers = HttpHeaders()
+
+        //Set `content-type` header
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        //Set `accept` header
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
+
+        //Build the request
+        val entity = HttpEntity(product, headers)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.PUT, entity)
+
+        println("UPDATE OR CREATE PRODUCT: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun deleteProduct(productId: Long): ResponseEntity<String>{
         val url = "$warehouseServiceURL/$productId"
 
@@ -222,6 +245,19 @@ class ProductRestService(
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
 
         println("GET PRODUCT WAREHOUSES: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun getProductStorages(productId: Long): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$productId/storages"
+
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+
+        println("GET PRODUCT STORAGES: Warehouse service response $responseEntity")
 
         return responseEntity
     }

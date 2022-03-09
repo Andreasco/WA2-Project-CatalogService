@@ -40,6 +40,19 @@ class ProductController(val productRestService: ProductRestService) {
         return productRestService.addProduct(product)
     }
 
+    @PutMapping("/{productId}")
+    fun updateOrCreateProduct(
+        @PathVariable
+        @Positive(message = "Insert a valid productId")
+        productId: Long,
+
+        @RequestBody
+        @NotNull
+        productDTO: ProductDTO
+    ): ResponseEntity<String> {
+        return productRestService.updateOrCreateProduct(productId, productDTO)
+    }
+
     @DeleteMapping("/{productId}")
     fun deleteProduct(
         @PathVariable
@@ -86,5 +99,15 @@ class ProductController(val productRestService: ProductRestService) {
     ): ResponseEntity<String>{
 
         return productRestService.getProductWarehouses(productId)
+    }
+
+    @GetMapping("/{productId}/storages")
+    fun getProductStorages(
+        @PathVariable
+        @Positive(message = "Insert a valid productId")
+        productId: Long
+    ): ResponseEntity<String>{
+
+        return productRestService.getProductStorages(productId)
     }
 }
