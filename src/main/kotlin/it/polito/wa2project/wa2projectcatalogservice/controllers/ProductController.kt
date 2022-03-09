@@ -30,7 +30,7 @@ class ProductController(val productRestService: ProductRestService) {
         return productRestService.giveStars(stars, productId)
     }
 
-    @PostMapping("/{productId}/comment")
+    @PostMapping("/{productId}/comments")
     fun postComment(
         @PathVariable
         @Positive(message = "Insert a valid productId")

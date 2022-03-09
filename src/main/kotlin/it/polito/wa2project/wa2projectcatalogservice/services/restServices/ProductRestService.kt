@@ -105,7 +105,7 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder,
         if (!productBoughtByLoggedUser(productId))
             return ResponseEntity("You cannot comment this product because you haven't bought it", HttpStatus.FORBIDDEN)
 
-        val url = "$warehouseServiceURL/$productId/comment"
+        val url = "$warehouseServiceURL/$productId/comments"
 
         //Create headers
         val headers = HttpHeaders()
