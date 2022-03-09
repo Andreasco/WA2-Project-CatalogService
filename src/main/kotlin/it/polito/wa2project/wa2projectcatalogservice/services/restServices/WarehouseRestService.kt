@@ -67,6 +67,30 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
     }
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun updateOrCreateWarehouse(newWarehouseDTO: WarehouseDTO, warehouseId: Long): ResponseEntity<String> {
+        val url = "$warehouseServiceURL/$warehouseId"
+
+        //Create headers
+        val headers = HttpHeaders()
+
+        //Set `content-type` header
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        //Set `accept` header
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
+
+        //Build the request
+        val entity = HttpEntity(newWarehouseDTO, headers)
+
+        //Send PUT request
+        val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.PUT, entity)
+
+        println("UPDATE OR CREATE WAREHOUSE: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun editWarehouse(newWarehouseDTO: WarehouseDTO, warehouseId: Long): ResponseEntity<String> {
         val url = "$warehouseServiceURL/$warehouseId"
 
@@ -98,6 +122,123 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.DELETE)
 
         println("DELETE WAREHOUSE: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun getWarehouseProducts(warehouseId: Long): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$warehouseId/products"
+
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+
+        println("GET WAREHOUSE PRODUCTS: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun getProductsStorages(warehouseId: Long): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$warehouseId/storages"
+
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+
+        println("GET PRODUCTS STORAGES: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun loadProduct(warehouseId: Long, productId: Long, loadQuantity: Int): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$warehouseId/products/$productId/load"
+
+        //Create headers
+        val headers = HttpHeaders()
+
+        //Set `content-type` header
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        //Set `accept` header
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
+
+        //Build the request
+        val entity = HttpEntity(loadQuantity, headers)
+
+        //Send POST request
+        //val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+
+        println("ADD WAREHOUSE: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun unloadProduct(warehouseId: Long, productId: Long, unloadQuantity: Int): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$warehouseId/products/$productId/unload"
+
+        //Create headers
+        val headers = HttpHeaders()
+
+        //Set `content-type` header
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        //Set `accept` header
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
+
+        //Build the request
+        val entity = HttpEntity(unloadQuantity, headers)
+
+        //Send POST request
+        //val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+
+        println("ADD WAREHOUSE: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun checkProductQuantityIsBelowAlarmLevel(warehouseId: Long, productId: Long): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$warehouseId/products/$productId/isQuantityBelowAlarmLevel"
+
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+
+        println("CHECK PRODUCT QUANTITY LEVEL: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun updateProductAlarmLevel(warehouseId: Long, productId: Long, alarmLevel: Int): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$warehouseId/products/$productId/alarmLevel"
+
+        //Create headers
+        val headers = HttpHeaders()
+
+        //Set `content-type` header
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        //Set `accept` header
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
+
+        //Build the request
+        val entity = HttpEntity(alarmLevel, headers)
+
+        //Send POST request
+        //val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+
+        println("UPDATE PRODUCT ALARM LEVEL: Warehouse service response $responseEntity")
 
         return responseEntity
     }
