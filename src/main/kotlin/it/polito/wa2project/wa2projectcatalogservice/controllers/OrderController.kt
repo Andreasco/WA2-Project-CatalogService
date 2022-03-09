@@ -58,7 +58,6 @@ class OrderController(val choreographyCatalogService: ChoreographyCatalogService
         return orderRestService.updateOrder(newOrder, orderId)
     }
 
-    //TODO anche questo deve essere gestito con una saga?
     @DeleteMapping("/{orderId}")
     fun deleteOrder(
         @PathVariable

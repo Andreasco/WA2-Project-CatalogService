@@ -1,5 +1,6 @@
 package it.polito.wa2project.wa2projectcatalogservice.services.restServices
 
+import it.polito.wa2project.wa2projectcatalogservice.dto.product.CommentDTO
 import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.ProductDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import it.polito.wa2project.wa2projectcatalogservice.repositories.coreography.OrderRequestRepository
@@ -14,9 +15,10 @@ import java.util.*
 import kotlin.collections.HashMap
 
 @Service
-class ProductRestService(restTemplateBuilder: RestTemplateBuilder,
-                         val orderRequestRepository: OrderRequestRepository,
-                         val userRepository: UserRepository
+class ProductRestService(
+    restTemplateBuilder: RestTemplateBuilder,
+    val orderRequestRepository: OrderRequestRepository,
+    val userRepository: UserRepository
 ) {
     private val restTemplate: RestTemplate
 
@@ -67,41 +69,21 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder,
         return responseEntity
     }
 
-    /* PRODUCT CONTROLLER ***********************************************/
+    fun getProductComments(productId: Long): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$productId/comments"
 
-    fun giveStars(stars: Int, productId: Long): ResponseEntity<String>{
-        if (!productBoughtByLoggedUser(productId))
-            return ResponseEntity("You cannot give stars to this product because you haven't bought it", HttpStatus.FORBIDDEN)
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
 
-        val url = "$warehouseServiceURL/$productId/stars"
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
 
-        //Create headers
-        val headers = HttpHeaders()
-
-        //Set `content-type` header
-        headers.contentType = MediaType.APPLICATION_JSON
-
-        //Set `accept` header
-        headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
-
-        //Create a map for post parameters
-        val map: MutableMap<String, Any> = HashMap()
-        map["stars"] = stars
-
-        //Build the request
-        val entity = HttpEntity(map, headers)
-
-        //Send POST request
-        //val response: String = restTemplate.postForObject(url, entity)
-
-        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
-
-        println("GIVE STARS: Warehouse service response $responseEntity")
+        println("GET PRODUCT COMMENTS: Warehouse service response $responseEntity")
 
         return responseEntity
     }
 
-    fun postComment(comment: String, productId: Long): ResponseEntity<String>{
+    /* PRODUCT CONTROLLER ***********************************************/
+
+    fun postComment(comment: CommentDTO, productId: Long): ResponseEntity<String>{
         if (!productBoughtByLoggedUser(productId))
             return ResponseEntity("You cannot comment this product because you haven't bought it", HttpStatus.FORBIDDEN)
 
@@ -116,12 +98,8 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder,
         //Set `accept` header
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
-        //Create a map for post parameters
-        val map: MutableMap<String, Any> = HashMap()
-        map["comment"] = comment
-
         //Build the request
-        val entity = HttpEntity(map, headers)
+        val entity = HttpEntity(comment, headers)
 
         //Send POST request
         //val response: String = restTemplate.postForObject(url, entity)
@@ -133,7 +111,6 @@ class ProductRestService(restTemplateBuilder: RestTemplateBuilder,
         return responseEntity
     }
 
-    //TODO ne vale la pena?
     private fun productBoughtByLoggedUser(productId: Long): Boolean{
         val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
         val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!

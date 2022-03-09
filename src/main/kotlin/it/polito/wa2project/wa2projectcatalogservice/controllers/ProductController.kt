@@ -1,5 +1,6 @@
 package it.polito.wa2project.wa2projectcatalogservice.controllers
 
+import it.polito.wa2project.wa2projectcatalogservice.dto.product.CommentDTO
 import it.polito.wa2project.wa2projectcatalogservice.dto.warehouse.ProductDTO
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.ProductRestService
 import org.springframework.http.ResponseEntity
@@ -13,23 +14,6 @@ import javax.validation.constraints.Positive
 @RequestMapping("/products")
 @Validated
 class ProductController(val productRestService: ProductRestService) {
-    //TODO devo controllare se il prodotto per cui vogliono fare una operazione è stato comprato dall'utente
-    //uso una chiamata rest verso orderService oppure controllo nella mia tabella orderRequest?
-
-    @PostMapping("/{productId}/stars")
-    fun giveStars(
-        @PathVariable
-        @Positive(message = "Insert a valid productId")
-        productId: Long,
-
-        @RequestBody
-        @Positive(message = "Insert a valid number of stars")
-        stars: Int
-    ): ResponseEntity<String> {
-
-        return productRestService.giveStars(stars, productId)
-    }
-
     @PostMapping("/{productId}/comments")
     fun postComment(
         @PathVariable
@@ -38,13 +22,13 @@ class ProductController(val productRestService: ProductRestService) {
 
         @RequestBody
         @NotNull(message = "Insert a valid comment")
-        comment: String
+        commentDTO: CommentDTO
     ): ResponseEntity<String> {
 
-        return productRestService.postComment(comment, productId)
+        return productRestService.postComment(commentDTO, productId)
     }
 
-    //TODO aggiungere endpoint @PostMapping("/storage")
+    //TODO aggiungere endpoint LoadProduct, UnloadProduct e storage (controllare il controller per vedere cosa manca)
 
     @PostMapping
     fun addProduct(

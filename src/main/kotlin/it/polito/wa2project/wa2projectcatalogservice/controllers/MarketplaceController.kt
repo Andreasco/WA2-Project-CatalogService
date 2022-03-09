@@ -18,12 +18,6 @@ class MarketplaceController(val productRestService: ProductRestService) {
         return productRestService.getProductsByCategory(category)
     }
 
-    //TODO facciamo un metodo che ritorna tutte le informazioni di tutti i prodotti oppure un metodo che ritorna
-    //solo alcune informazioni per ogni prodotto tipo id, nome, prezzo e disponibilità e un altro metodo che
-    //dato un id ritorna tutte le altre informazioni?
-
-    //Eventualmente questo sarebbe il metodo per avere tutte le altre informazioni
-
     @GetMapping("/products/{productId}")
     fun getProductInfo(
         @PathVariable
@@ -42,5 +36,15 @@ class MarketplaceController(val productRestService: ProductRestService) {
     ): ResponseEntity<String>{
 
         return productRestService.getProductPicture(productId)
+    }
+
+    @GetMapping("/products/{productId}/comments")
+    fun getProductComments(
+        @PathVariable
+        @Positive(message = "Insert a valid productId")
+        productId: Long
+    ): ResponseEntity<String>{
+
+        return productRestService.getProductComments(productId)
     }
 }
