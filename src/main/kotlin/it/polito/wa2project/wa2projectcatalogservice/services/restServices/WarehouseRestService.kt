@@ -154,7 +154,7 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun loadProduct(warehouseId: Long, productId: Long, loadQuantity: Int): ResponseEntity<String>{
-        val url = "$warehouseServiceURL/$warehouseId/products/$productId/load?loadQuantity=$loadQuantity"
+        val url = "$warehouseServiceURL/$warehouseId/products/$productId/load?quantity=$loadQuantity"
 
         //Create headers
         val headers = HttpHeaders()
@@ -180,7 +180,7 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun unloadProduct(warehouseId: Long, productId: Long, unloadQuantity: Int): ResponseEntity<String>{
-        val url = "$warehouseServiceURL/$warehouseId/products/$productId/unload?unloadQuantity=$unloadQuantity"
+        val url = "$warehouseServiceURL/$warehouseId/products/$productId/unload?quantity=$unloadQuantity"
 
         //Create headers
         val headers = HttpHeaders()
