@@ -154,7 +154,7 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun loadProduct(warehouseId: Long, productId: Long, loadQuantity: Int): ResponseEntity<String>{
-        val url = "$warehouseServiceURL/$warehouseId/products/$productId/load"
+        val url = "$warehouseServiceURL/$warehouseId/products/$productId/load?loadQuantity=$loadQuantity"
 
         //Create headers
         val headers = HttpHeaders()
@@ -166,12 +166,12 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
         //Build the request
-        val entity = HttpEntity(loadQuantity, headers)
+        //val entity = HttpEntity(loadQuantity, headers)
 
         //Send POST request
         //val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
 
-        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url)
 
         println("ADD WAREHOUSE: Warehouse service response $responseEntity")
 
@@ -180,7 +180,7 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
     fun unloadProduct(warehouseId: Long, productId: Long, unloadQuantity: Int): ResponseEntity<String>{
-        val url = "$warehouseServiceURL/$warehouseId/products/$productId/unload"
+        val url = "$warehouseServiceURL/$warehouseId/products/$productId/unload?unloadQuantity=$unloadQuantity"
 
         //Create headers
         val headers = HttpHeaders()
@@ -192,12 +192,12 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
         //Build the request
-        val entity = HttpEntity(unloadQuantity, headers)
+        //val entity = HttpEntity(unloadQuantity, headers)
 
         //Send POST request
         //val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
 
-        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url)
 
         println("ADD WAREHOUSE: Warehouse service response $responseEntity")
 
