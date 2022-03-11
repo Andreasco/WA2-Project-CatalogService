@@ -16,6 +16,7 @@ import org.springframework.kafka.annotation.KafkaListener
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory
 import org.springframework.kafka.core.ConsumerFactory
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory
+import org.springframework.kafka.support.serializer.ErrorHandlingDeserializer
 import org.springframework.kafka.support.serializer.JsonDeserializer
 
 
@@ -48,26 +49,49 @@ class KafkaConsumerConfig(
     )
 
     @Bean
-    fun consumerFactory(): ConsumerFactory<String, OrderResponseDTO> {
+    fun consumerFactoryOrder(): ConsumerFactory<String, OrderResponseDTO> {
         val props: MutableMap<String, Any> = HashMap()
         props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress!!
         props[ConsumerConfig.GROUP_ID_CONFIG] = groupId!!
         // props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
         // props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
-        return DefaultKafkaConsumerFactory(props, StringDeserializer(),
-            JsonDeserializer(OrderResponseDTO::class.java).trustedPackages("*").ignoreTypeHeaders())
+        val errorHandlingDeserializer: ErrorHandlingDeserializer<OrderResponseDTO> = ErrorHandlingDeserializer(
+            JsonDeserializer(OrderResponseDTO::class.java).trustedPackages("*").ignoreTypeHeaders()
+        )
+        return DefaultKafkaConsumerFactory(props, StringDeserializer(), errorHandlingDeserializer)
+
     }
 
     @Bean
-    fun kafkaListenerContainerFactory(): ConcurrentKafkaListenerContainerFactory<String, OrderResponseDTO> {
+    fun kafkaListenerContainerFactoryOrder(): ConcurrentKafkaListenerContainerFactory<String, OrderResponseDTO> {
         val factory = ConcurrentKafkaListenerContainerFactory<String, OrderResponseDTO>()
-        factory.consumerFactory = consumerFactory()
+        factory.consumerFactory = consumerFactoryOrder()
+        return factory
+    }
+
+    @Bean
+    fun consumerFactoryNotification(): ConsumerFactory<String, NotificationRequestDTO> {
+        val props: MutableMap<String, Any> = HashMap()
+        props[ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG] = bootstrapAddress!!
+        props[ConsumerConfig.GROUP_ID_CONFIG] = groupId!!
+        // props[ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG] = StringDeserializer::class.java
+        // props[ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG] = JsonDeserializer::class.java
+        val errorHandlingDeserializer: ErrorHandlingDeserializer<NotificationRequestDTO> = ErrorHandlingDeserializer(
+            JsonDeserializer(NotificationRequestDTO::class.java).trustedPackages("*").ignoreTypeHeaders()
+        )
+        return DefaultKafkaConsumerFactory(props, StringDeserializer(), errorHandlingDeserializer)
+    }
+
+    @Bean
+    fun kafkaListenerContainerFactoryNotification(): ConcurrentKafkaListenerContainerFactory<String, NotificationRequestDTO> {
+        val factory = ConcurrentKafkaListenerContainerFactory<String, NotificationRequestDTO>()
+        factory.consumerFactory = consumerFactoryNotification()
         return factory
     }
 
     //Nota, il primo listener gestisce errori mentre il secondo ordini andati a buon fine
 
-    @KafkaListener(topics = ["orderWarehouseSagaResponse"], groupId = "group1")
+    @KafkaListener(topics = ["orderWarehouseSagaResponse"], groupId = "group1", containerFactory = "kafkaListenerContainerFactoryOrder")
     fun receiveWarehouseResponse(orderResponseDTO: OrderResponseDTO) {
         println("OrderResponse arrived from warehouseService: $orderResponseDTO")
 
@@ -82,7 +106,7 @@ class KafkaConsumerConfig(
         }
     }
 
-    @KafkaListener(topics = ["orderWalletSagaResponse"], groupId = "group1")
+    @KafkaListener(topics = ["orderWalletSagaResponse"], groupId = "group1", containerFactory = "kafkaListenerContainerFactoryOrder")
     fun receiveOrderResponse(orderResponseDTO: OrderResponseDTO) {
         println("OrderResponse arrived from walletService: $orderResponseDTO")
 
@@ -101,7 +125,7 @@ class KafkaConsumerConfig(
         notificationRestService.sendEmail(buyerEmail, subject, emailText)
     }
 
-    @KafkaListener(topics = ["emailRequest"], groupId = "group1")
+    @KafkaListener(topics = ["emailRequest"], groupId = "group1", containerFactory = "kafkaListenerContainerFactoryNotification")
     fun receiveWarehouseEmailRequest(notificationRequestDTO: NotificationRequestDTO) {
         println("NotificationRequestDTO arrived: $notificationRequestDTO")
 
