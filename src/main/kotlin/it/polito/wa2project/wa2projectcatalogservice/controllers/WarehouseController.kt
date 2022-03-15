@@ -156,7 +156,7 @@ class WarehouseController(val warehouseRestService: WarehouseRestService) {
         @Positive(message = "Insert a valid productId")
         productId: Long,
 
-        @RequestBody
+        @RequestParam
         @NotNull(message = "An alarmLevel is required")
         newLevel: Int,
     ): ResponseEntity<String>{
