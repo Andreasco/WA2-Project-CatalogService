@@ -10,7 +10,6 @@ import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.web.client.*
-import org.springframework.web.multipart.MultipartFile
 import java.util.*
 
 @Service
@@ -210,7 +209,7 @@ class ProductRestService(
     }
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
-    fun uploadPicture(picture: MultipartFile, productId: Long): ResponseEntity<String>{
+    fun uploadProductPicture(pictureUrl: String, productId: Long): ResponseEntity<String>{
         val url = "$warehouseServiceURL/$productId/picture"
 
         //Create headers
@@ -223,7 +222,7 @@ class ProductRestService(
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
         //Build the request
-        val entity = HttpEntity(picture, headers)
+        val entity = HttpEntity(pictureUrl, headers)
 
         //Send POST request
         //val response: String = restTemplate.postForObject(url, entity)

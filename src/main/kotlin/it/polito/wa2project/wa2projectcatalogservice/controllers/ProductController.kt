@@ -6,7 +6,6 @@ import it.polito.wa2project.wa2projectcatalogservice.services.restServices.Produ
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import org.springframework.web.multipart.MultipartFile
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 
@@ -76,17 +75,17 @@ class ProductController(val productRestService: ProductRestService) {
     }
 
     @PostMapping("/{productId}/picture")
-    fun uploadPicture(
+    fun uploadProductPicture(
         @PathVariable
         @Positive(message = "Insert a valid productId")
         productId: Long,
 
-        @RequestParam
+        @RequestBody
         @NotNull(message = "Insert a valid picture")
-        picture: MultipartFile
+        pictureUrl: String
     ): ResponseEntity<String> {
 
-        return productRestService.uploadPicture(picture, productId)
+        return productRestService.uploadProductPicture(pictureUrl, productId)
     }
 
     @GetMapping("/{productId}/warehouses")
