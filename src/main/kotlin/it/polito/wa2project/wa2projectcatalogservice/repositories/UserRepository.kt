@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository
 interface UserRepository: JpaRepository<User, Long> {
     fun findByUsername(username: String): User?
 
-    @Query("SELECT u.email FROM User u WHERE u.roles = 'ADMIN'") //TODO controllare se in roles ADMIN è scritto così
+    @Query("SELECT u.email FROM User u WHERE u.roles = 'ADMIN'")
     fun findAdminsEmails(): Set<String>
 }

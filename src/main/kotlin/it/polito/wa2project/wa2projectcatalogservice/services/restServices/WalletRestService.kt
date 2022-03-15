@@ -66,9 +66,11 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
         return responseEntity
     }
 
-    //TODO aggiungo anche l'userId per essere sicuro di chi richiede le transazioni?
     fun getTransactionsBetweenDate(walletId: Long, from: Long, to: Long): ResponseEntity<String>{
-        val url = "$walletServiceURL/$walletId/transactions?from=$from&to=$to"
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
+        val url = "$walletServiceURL/$walletId/transactions?from=$from&to=$to&buyerId=$userId"
 
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda wallet service
 

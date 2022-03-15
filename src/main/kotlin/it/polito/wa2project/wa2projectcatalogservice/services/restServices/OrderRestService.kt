@@ -37,7 +37,6 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, val userReposit
         val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
         val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
 
-        //TODO Guido deve aggiungere il buyerId anche in questo caso altrimenti chiunque potrebbe richiedere qualunque ordine
         val url = "$orderServiceURL/$orderId?buyerId=$userId"
 
         //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
