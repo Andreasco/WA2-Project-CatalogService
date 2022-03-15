@@ -218,8 +218,8 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
     }
 
     @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
-    fun updateProductAlarmLevel(warehouseId: Long, productId: Long, alarmLevel: Int): ResponseEntity<String>{
-        val url = "$warehouseServiceURL/$warehouseId/products/$productId/alarmLevel"
+    fun updateProductAlarmLevel(warehouseId: Long, productId: Long, newLevel: Int): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/$warehouseId/products/$productId/alarmLevel?newLevel=$newLevel"
 
         //Create headers
         val headers = HttpHeaders()
@@ -231,12 +231,12 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
         //Build the request
-        val entity = HttpEntity(alarmLevel, headers)
+        //val entity = HttpEntity(alarmLevel, headers)
 
         //Send POST request
         //val response: String = restTemplate.postForObject(warehouseServiceURL, entity)
 
-        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url)
 
         println("UPDATE PRODUCT ALARM LEVEL: Warehouse service response $responseEntity")
 

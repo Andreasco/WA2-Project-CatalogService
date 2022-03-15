@@ -158,9 +158,9 @@ class WarehouseController(val warehouseRestService: WarehouseRestService) {
 
         @RequestBody
         @NotNull(message = "An alarmLevel is required")
-        alarmLevel: Int,
+        newLevel: Int,
     ): ResponseEntity<String>{
 
-        return warehouseRestService.updateProductAlarmLevel(warehouseId, productId, alarmLevel)
+        return warehouseRestService.updateProductAlarmLevel(warehouseId, productId, newLevel)
     }
 }
