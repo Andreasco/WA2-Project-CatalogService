@@ -4,6 +4,7 @@ import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.*
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.web.client.*
@@ -29,6 +30,18 @@ class OrderRestService(restTemplateBuilder: RestTemplateBuilder, val userReposit
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
 
         println("GET ALL ORDERS: Order service response $responseEntity")
+
+        return responseEntity
+    }
+
+    @PreAuthorize("hasRole('ADMIN')") // This works both with "ROLE_ADMIN" and "ADMIN"
+    fun getAllOrdersAdmin(userId: Long): ResponseEntity<String>{
+        val url = "$orderServiceURL?buyerId=$userId"
+        //val response: String = restTemplate.getForObject(url) //Dovrebbe contenere il JSON che mi manda warehouse
+
+        val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
+
+        println("GET ALL ORDERS ADMIN: Order service response $responseEntity")
 
         return responseEntity
     }
