@@ -48,6 +48,8 @@ class RestExceptionHandler: ResponseEntityExceptionHandler(){
      *
      * - Handles the exception thrown in [it.polito.wa2project.wa2projectcatalogservice.controllers.AuthenticationController.confirmRegistration]
      * if the token is expired.
+     *
+     * - Handles the exception thrown in rest services if the service return an error.
      */
     @ExceptionHandler(
         ValidationException::class,
@@ -119,8 +121,10 @@ class RestExceptionHandler: ResponseEntityExceptionHandler(){
     protected fun handleNotFoundException(e: NotFoundException): ResponseEntity<String> =
         ResponseEntity(e.message, HttpStatus.NOT_FOUND)
 
+    /*
     @ExceptionHandler(HttpClientErrorException::class)
     protected fun handleRestCallsExceptions(e: HttpClientErrorException): ResponseEntity<String> =
         ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+    */
 
 }// RestExceptionHandler
