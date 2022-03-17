@@ -123,9 +123,9 @@ class RestExceptionHandler: ResponseEntityExceptionHandler(){
         val errorSplit = e.message!!.split(":")
 
         val actualMessage = errorSplit[1]
-        //val errorNumber = errorSplit[0].split(" ")[0]
+        val errorNumber = errorSplit[0].split(" ")[0]
 
-        return ResponseEntity(actualMessage, HttpStatus.BAD_REQUEST)
+        return ResponseEntity(actualMessage + " " + errorNumber, HttpStatus.BAD_REQUEST)
     }
 
 }// RestExceptionHandler
