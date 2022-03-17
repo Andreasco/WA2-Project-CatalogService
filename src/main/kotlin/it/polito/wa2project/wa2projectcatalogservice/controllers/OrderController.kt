@@ -29,19 +29,14 @@ class OrderController(val choreographyCatalogService: ChoreographyCatalogService
 
     @GetMapping
     fun getAllOrders(
-    ): ResponseEntity<String> {
-
-        return orderRestService.getAllOrders()
-    }
-
-    @GetMapping
-    fun getAllOrdersAdmin(
         @RequestParam
         @Positive(message = "Insert a valid userID")
-        userId: Long
+        userId: Long? = null
     ): ResponseEntity<String> {
-
-        return orderRestService.getAllOrdersAdmin(userId)
+        return if(userId != null)
+            orderRestService.getAllOrdersAdmin(userId)
+        else
+            orderRestService.getAllOrders()
     }
 
     @GetMapping("/{orderId}")
