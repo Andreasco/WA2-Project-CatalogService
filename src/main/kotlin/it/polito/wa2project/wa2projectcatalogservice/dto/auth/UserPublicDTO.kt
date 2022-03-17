@@ -4,7 +4,7 @@ import it.polito.wa2project.wa2projectcatalogservice.domain.User
 
 data class UserPublicDTO(
     var username: String?,
-    var customerId: Long,
+    var userId: Long,
     var email: String?,
     var isEnabled: Boolean?,
     var roles: String?
@@ -12,7 +12,7 @@ data class UserPublicDTO(
 
 fun User.toUserPublicDTO() = UserPublicDTO(
     username,
-    customer.getId()!!,
+    getId()!!,
     email,
     isEnabled,
     roles
