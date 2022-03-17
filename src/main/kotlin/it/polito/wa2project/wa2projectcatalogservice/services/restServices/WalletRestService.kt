@@ -1,5 +1,6 @@
 package it.polito.wa2project.wa2projectcatalogservice.services.restServices
 
+import it.polito.wa2project.wa2projectcatalogservice.dto.wallet.RechargeWalletDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import org.springframework.boot.web.client.RestTemplateBuilder
 import org.springframework.http.HttpEntity
@@ -89,6 +90,41 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
         val responseEntity: ResponseEntity<String> = restTemplate.getForEntity(url)
 
         println("GET TRANSACTION: Wallet service response $responseEntity")
+
+        return responseEntity
+    }
+
+    fun rechargeWallet(rechargeDTO: RechargeWalletDTO): ResponseEntity<String>{
+        val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
+        val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
+
+        val url = "$walletServiceURL/transactions"
+
+        //Create headers
+        val headers = HttpHeaders()
+
+        //Set `content-type` header
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        //Set `accept` header
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
+
+        //Create a map for post parameters
+        //val map: MutableMap<String, Any> = HashMap()
+        //map["userId"] = userId
+
+        //Build the request
+        rechargeDTO.reason = "RECHARGE"
+        rechargeDTO.userID = userId
+
+        val entity = HttpEntity(rechargeDTO, headers) //Because walletService gets a simple Long
+
+        //Send POST request
+        //val response: String = restTemplate.postForObject(walletServiceURL, entity)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+
+        println("RECHARGE WALLET: Wallet service response $responseEntity")
 
         return responseEntity
     }

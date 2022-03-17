@@ -1,5 +1,6 @@
 package it.polito.wa2project.wa2projectcatalogservice.controllers
 
+import it.polito.wa2project.wa2projectcatalogservice.dto.wallet.RechargeWalletDTO
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.WalletRestService
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -47,7 +48,7 @@ class WalletController(val walletRestService: WalletRestService) {
         return walletRestService.getTransactionsBetweenDate(walletId, from!!, to!!)
     }
 
-    @GetMapping("{walletId}/transactions/{transactionId}")
+    @GetMapping("/{walletId}/transactions/{transactionId}")
     fun getTransaction(
         @PathVariable
         @Positive(message = "Insert a valid walletId")
@@ -59,5 +60,15 @@ class WalletController(val walletRestService: WalletRestService) {
     ): ResponseEntity<String>{
 
         return walletRestService.getTransaction(walletId, transactionId)
+    }
+
+    @PostMapping("/transactions")
+    fun rechargeWallet(
+        @RequestBody
+        @Positive(message = "Insert a valid transactionId")
+        rechargeDTO: RechargeWalletDTO,
+    ): ResponseEntity<String>{
+
+        return walletRestService.rechargeWallet(rechargeDTO)
     }
 }
