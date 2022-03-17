@@ -5,6 +5,7 @@ import it.polito.wa2project.wa2projectcatalogservice.services.restServices.Walle
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
+import javax.validation.Valid
 import javax.validation.constraints.NotNull
 import javax.validation.constraints.Positive
 
@@ -65,7 +66,7 @@ class WalletController(val walletRestService: WalletRestService) {
     @PostMapping("/transactions")
     fun rechargeWallet(
         @RequestBody
-        @Positive(message = "Insert a valid transactionId")
+        @Valid
         rechargeDTO: RechargeWalletDTO,
     ): ResponseEntity<String>{
 
