@@ -43,7 +43,7 @@ class ChoreographyCatalogService(
             orderRequest.deliveryNumber,
             orderRequest.status,
             orderRequest.totalPrice,
-            orderRequest.destinationWalletId,
+            orderRequest.destinationWalletId ?: 1,
             orderRequest.sourceWalletId,
             orderRequest.transactionReason,
         )
