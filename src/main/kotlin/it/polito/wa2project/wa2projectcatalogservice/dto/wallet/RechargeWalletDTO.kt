@@ -12,10 +12,7 @@ data class RechargeWalletDTO (
     @field:NotNull(message = "Destination wallet id is required")
     var destinationWalletId: Long? = null,
 
-    @field:NotNull(message = "Reason is required")
     var reason: String?,
 
-    @field:Positive(message = "Insert a valid user id")
-    @field:NotNull(message = "User id is required")
     var userID: Long?
 )
