@@ -1,6 +1,6 @@
 package it.polito.wa2project.wa2projectcatalogservice.controllers
 
-import it.polito.wa2project.wa2projectcatalogservice.dto.wallet.RechargeWalletDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.wallet.TransactionRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.services.restServices.WalletRestService
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -67,7 +67,7 @@ class WalletController(val walletRestService: WalletRestService) {
     fun rechargeWallet(
         @RequestBody
         @Valid
-        rechargeDTO: RechargeWalletDTO,
+        rechargeDTO: TransactionRequestDTO,
     ): ResponseEntity<String>{
 
         return walletRestService.rechargeWallet(rechargeDTO)
