@@ -119,7 +119,13 @@ class RestExceptionHandler: ResponseEntityExceptionHandler(){
      * Handles the exception thrown in rest services if the service return with an error.
      */
     @ExceptionHandler(HttpClientErrorException::class)
-    protected fun handleRestCallsExceptions(e: HttpClientErrorException): ResponseEntity<String> =
-        ResponseEntity(e.message, HttpStatus.BAD_REQUEST)
+    protected fun handleRestCallsExceptions(e: HttpClientErrorException): ResponseEntity<String>{
+        val errorSplit = e.message!!.split(":")
+
+        val actualMessage = errorSplit[1]
+        val errorNumber = errorSplit[0].split(" ")[0]
+
+        return ResponseEntity(actualMessage, HttpStatus.valueOf(errorNumber))
+    }
 
 }// RestExceptionHandler
