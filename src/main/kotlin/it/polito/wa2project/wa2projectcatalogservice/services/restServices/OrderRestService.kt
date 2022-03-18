@@ -1,9 +1,7 @@
 package it.polito.wa2project.wa2projectcatalogservice.services.restServices
 
-import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderProduct
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderRequest
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderDTO
-import it.polito.wa2project.wa2projectcatalogservice.dto.wallet.TransactionRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import it.polito.wa2project.wa2projectcatalogservice.repositories.coreography.OrderRequestRepository
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -99,40 +97,36 @@ class OrderRestService(
         val usernameLogged = SecurityContextHolder.getContext().authentication.principal as String
         val userId = userRepository.findByUsername(usernameLogged)!!.getId()!!
 
-        val orderRequest = orderRequestRepository.findById(orderId)
+        val orderRequest = orderRequestRepository.findByOrderId(orderId)
+            ?: return ResponseEntity("There's no order with such ID", HttpStatus.NOT_FOUND)
 
-        if(orderRequest.isEmpty)
-            return ResponseEntity("There's no order with such ID", HttpStatus.NOT_FOUND)
-
-        val actualOrderRequest = orderRequest.get()
-
-        if(actualOrderRequest.buyerId != userId)
+        if(orderRequest.buyerId != userId)
             return ResponseEntity("You can't delete this order because you haven't bought it", HttpStatus.FORBIDDEN)
 
         var deleted = false
 
         for (i in 0..4) {
-            val reloadedProducts = reloadWarehouse(actualOrderRequest)
-            if(reloadedProducts.size != actualOrderRequest.orderProducts.size) {
+            val step1 = reloadWarehouse(orderRequest)
+            if(!step1) {
                 //First step failed so undo what I have done, wait 5 seconds and retry
-                unloadWarehouse(reloadedProducts)
+                unloadWarehouse(orderRequest)
                 Thread.sleep(5000)
                 continue
             }
 
-            val step2 = refundUser(actualOrderRequest)
+            val step2 = refundUser(orderRequest)
             if(!step2) {
                 //Second step failed so undo what I have done, wait 5 seconds and retry
-                unloadWarehouse(reloadedProducts)
+                unloadWarehouse(orderRequest)
                 Thread.sleep(5000)
                 continue
             }
 
-            val step3 = deleteOrderFromService(actualOrderRequest)
+            val step3 = deleteOrderFromService(orderRequest)
             if(!step3) {
                 //Third step failed so undo what I have done, wait 5 seconds and retry
-                unloadWarehouse(reloadedProducts)
-                undoRefundUser(actualOrderRequest)
+                unloadWarehouse(orderRequest)
+                undoRefundUser(orderRequest)
                 Thread.sleep(5000)
                 continue
             }
@@ -150,41 +144,27 @@ class OrderRestService(
         return ResponseEntity(message, HttpStatus.OK)
     }
 
-    private fun reloadWarehouse(orderRequest: OrderRequest): List<OrderProduct>{
-        val reloadedProducts =  mutableListOf<OrderProduct>()
+    private fun reloadWarehouse(orderRequest: OrderRequest): Boolean{
+        val response = warehouseRestService.reloadProduct(orderRequest.uuid)
 
-        orderRequest.orderProducts.forEach {
-            val response = warehouseRestService.loadProduct(it.warehouseId!!, it.getId()!!, it.quantity.toInt())
-            if (response.statusCode != HttpStatus.OK)
-                reloadedProducts.add(it)
-        }
-
-        return reloadedProducts.toList()
+        return response.statusCode != HttpStatus.OK
     }
 
-    //Assuming that everything goes well calling this function
-    private fun unloadWarehouse(loadedProducts: List<OrderProduct>){
-        loadedProducts.forEach {
-            warehouseRestService.unloadProduct(it.warehouseId!!, it.getId()!!, it.quantity.toInt())
-        }
+    private fun unloadWarehouse(orderRequest: OrderRequest){
+        warehouseRestService.undoReloadProduct(orderRequest.uuid)
+
+        //Assuming that everything goes well calling this function
+        //return response.statusCode != HttpStatus.OK
     }
 
     private fun refundUser(orderRequest: OrderRequest): Boolean{
-        val userWalletId = orderRequest.sourceWalletId
-
-        val transactionRequestDTO = TransactionRequestDTO(orderRequest.totalPrice, userWalletId, "REFUND", orderRequest.buyerId)
-
-        val response = walletRestService.refundWallet(transactionRequestDTO)
+        val response = walletRestService.refundWallet(orderRequest.uuid)
 
         return response.statusCode != HttpStatus.OK
     }
 
     private fun undoRefundUser(orderRequest: OrderRequest): Boolean{
-        val userWalletId = orderRequest.sourceWalletId
-
-        val transactionRequestDTO = TransactionRequestDTO(orderRequest.totalPrice, 1, "PAYMENT", orderRequest.buyerId)
-
-        val response = walletRestService.performTransaction(userWalletId, transactionRequestDTO)
+        val response = walletRestService.undoRefundUser(orderRequest.uuid)
 
         return response.statusCode != HttpStatus.OK
     }

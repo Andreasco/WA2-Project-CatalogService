@@ -3,6 +3,7 @@ package it.polito.wa2project.wa2projectcatalogservice.services
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderProduct
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderRequest
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderRequestDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderResponseDTO
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderStatus
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.toOrderRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
@@ -77,6 +78,13 @@ class ChoreographyCatalogService(
         val orderRequest = orderRequestRepository.findByUuid(uuid)!!
 
         orderRequest.status = OrderStatus.FAILED
+
+        orderRequestRepository.save(orderRequest)
+    }
+
+    fun addIdToOrderRequest(orderResponseDTO: OrderResponseDTO){
+        val orderRequest = orderRequestRepository.findByUuid(orderResponseDTO.uuid)
+        orderRequest!!.orderId = orderResponseDTO.orderId
 
         orderRequestRepository.save(orderRequest)
     }

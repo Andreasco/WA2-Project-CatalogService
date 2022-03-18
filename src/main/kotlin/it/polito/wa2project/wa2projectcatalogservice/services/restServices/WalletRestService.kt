@@ -3,10 +3,7 @@ package it.polito.wa2project.wa2projectcatalogservice.services.restServices
 import it.polito.wa2project.wa2projectcatalogservice.dto.wallet.TransactionRequestDTO
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import org.springframework.boot.web.client.RestTemplateBuilder
-import org.springframework.http.HttpEntity
-import org.springframework.http.HttpHeaders
-import org.springframework.http.MediaType
-import org.springframework.http.ResponseEntity
+import org.springframework.http.*
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Service
 import org.springframework.web.client.*
@@ -129,8 +126,8 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
         return responseEntity
     }
 
-    fun refundWallet(transactionRequestDTO: TransactionRequestDTO): ResponseEntity<String>{
-        val url = "$walletServiceURL/transactions"
+    fun refundWallet(orderRequestUuid: String): ResponseEntity<String>{
+        val url = "$walletServiceURL/orderrequest/$orderRequestUuid"
 
         //Create headers
         val headers = HttpHeaders()
@@ -141,25 +138,15 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
         //Set `accept` header
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
-        //Create a map for post parameters
-        //val map: MutableMap<String, Any> = HashMap()
-        //map["userId"] = userId
-
-        //Build the request
-        val entity = HttpEntity(transactionRequestDTO, headers) //Because walletService gets a simple Long
-
-        //Send POST request
-        //val response: String = restTemplate.postForObject(walletServiceURL, entity)
-
-        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
+        val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.DELETE)
 
         println("REFUND WALLET: Wallet service response $responseEntity")
 
         return responseEntity
     }
 
-    fun performTransaction(walletId: Long, transactionRequestDTO: TransactionRequestDTO): ResponseEntity<String>{
-        val url = "$walletServiceURL/$walletId/transactions"
+    fun undoRefundUser(orderRequestUuid: String): ResponseEntity<String>{
+        val url = "$walletServiceURL/orderrequest/$orderRequestUuid"
 
         //Create headers
         val headers = HttpHeaders()
@@ -170,19 +157,9 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
         //Set `accept` header
         headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
 
-        //Create a map for post parameters
-        //val map: MutableMap<String, Any> = HashMap()
-        //map["userId"] = userId
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url)
 
-        //Build the request
-        val entity = HttpEntity(transactionRequestDTO, headers) //Because walletService gets a simple Long
-
-        //Send POST request
-        //val response: String = restTemplate.postForObject(walletServiceURL, entity)
-
-        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url, entity)
-
-        println("PERFORM TRANSACTION: Wallet service response $responseEntity")
+        println("UNDO REFUND WALLET: Wallet service response $responseEntity")
 
         return responseEntity
     }

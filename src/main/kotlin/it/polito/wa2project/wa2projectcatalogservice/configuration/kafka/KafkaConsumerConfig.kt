@@ -110,6 +110,9 @@ class KafkaConsumerConfig(
     fun receiveOrderResponse(orderResponseDTO: OrderResponseDTO) {
         println("OrderResponse arrived from walletService: $orderResponseDTO")
 
+        //Aggiorno orderRequest con l'orderId di orderResponse
+        choreographyCatalogService.addIdToOrderRequest(orderResponseDTO)
+
         val statusCode = orderResponseDTO.exitStatus.toInt()
         val orderId = orderResponseDTO.orderId
         val emailText = "Hello, we are glad to inform you that your order with ID $orderId ${orderStatusCodes[statusCode]}"

@@ -84,6 +84,10 @@ class OutboxListener(
                     //NOTA: i campi sono scritti tutti in minuscolo col _ al posto della maiuscola,
                     // quindi payload["buyer_id"] per esempio
 
+                    //Se orderRequest cambia aggiungendo l'orderId allora non devo fare niente
+                    if(payload["order_id"] != null)
+                        return
+
                     val orderRequestDTO = choreographyCatalogService.getOrderByUuid(payload["uuid"] as String)
 
                     println("OrderRequestDTO from DB on CREATE:\n$orderRequestDTO")

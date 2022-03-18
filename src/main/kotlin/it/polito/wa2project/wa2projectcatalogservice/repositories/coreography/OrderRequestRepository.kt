@@ -9,4 +9,6 @@ interface OrderRequestRepository: CrudRepository<OrderRequest, Long>{
     fun findByUuid(uuid: String): OrderRequest?
 
     fun findByBuyerId(userId: Long): Set<OrderRequest>
+
+    fun findByOrderId(orderId: Long): OrderRequest?
 }

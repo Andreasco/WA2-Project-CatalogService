@@ -242,4 +242,42 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
 
         return responseEntity
     }
+
+    fun reloadProduct(orderRequestUuid: String): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/orderrequest/$orderRequestUuid"
+
+        //Create headers
+        val headers = HttpHeaders()
+
+        //Set `content-type` header
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        //Set `accept` header
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.exchange(url, HttpMethod.DELETE)
+
+        println("LOAD PRODUCT ORDER DELETION: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
+
+    fun undoReloadProduct(orderRequestUuid: String): ResponseEntity<String>{
+        val url = "$warehouseServiceURL/orderrequest/$orderRequestUuid"
+
+        //Create headers
+        val headers = HttpHeaders()
+
+        //Set `content-type` header
+        headers.contentType = MediaType.APPLICATION_JSON
+
+        //Set `accept` header
+        headers.accept = Collections.singletonList(MediaType.APPLICATION_JSON)
+
+        val responseEntity: ResponseEntity<String> = restTemplate.postForEntity(url)
+
+        println("UNLOAD PRODUCT ORDER DELETION: Warehouse service response $responseEntity")
+
+        return responseEntity
+    }
 }
