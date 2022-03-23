@@ -244,7 +244,7 @@ class WarehouseRestService(restTemplateBuilder: RestTemplateBuilder) {
     }
 
     fun reloadProduct(orderRequestUuid: String): ResponseEntity<String>{
-        val url = "$warehouseServiceURL/orderrequest/$orderRequestUuid"
+        val url = "$warehouseServiceURL/orderrequests/$orderRequestUuid"
 
         //Create headers
         val headers = HttpHeaders()

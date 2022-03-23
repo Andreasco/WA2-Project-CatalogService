@@ -127,7 +127,7 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
     }
 
     fun refundWallet(orderRequestUuid: String): ResponseEntity<String>{
-        val url = "$walletServiceURL/orderrequest/$orderRequestUuid"
+        val url = "$walletServiceURL/orderrequests/$orderRequestUuid"
 
         //Create headers
         val headers = HttpHeaders()
@@ -146,7 +146,7 @@ class WalletRestService(restTemplateBuilder: RestTemplateBuilder, val userReposi
     }
 
     fun undoRefundUser(orderRequestUuid: String): ResponseEntity<String>{
-        val url = "$walletServiceURL/orderrequest/$orderRequestUuid"
+        val url = "$walletServiceURL/orderrequests/$orderRequestUuid"
 
         //Create headers
         val headers = HttpHeaders()
