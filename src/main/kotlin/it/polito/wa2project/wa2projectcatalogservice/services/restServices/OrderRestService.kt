@@ -109,7 +109,8 @@ class OrderRestService(
 
         var deleted = false
 
-        for (i in 0..4) {
+        var i = 0
+        while (i < 5 && !deleted) {
             /*val step1 = reloadWarehouse(orderRequest)
             if(!step1) {
                 //First step failed so undo what I have done, wait 5 seconds and retry
@@ -142,6 +143,7 @@ class OrderRestService(
                 //First step failed so undo what I have done, wait 5 seconds and retry
                 unloadWarehouse(orderRequest)
                 Thread.sleep(5000)
+                i++
                 continue
             }
 
@@ -152,6 +154,7 @@ class OrderRestService(
                 //Second step failed so undo what I have done, wait 5 seconds and retry
                 unloadWarehouse(orderRequest)
                 Thread.sleep(5000)
+                i++
                 continue
             }
 
@@ -164,6 +167,7 @@ class OrderRestService(
                 unloadWarehouse(orderRequest)
                 undoRefundUser(orderRequest)
                 Thread.sleep(5000)
+                i++
                 continue
             }
         }
