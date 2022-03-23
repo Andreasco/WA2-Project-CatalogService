@@ -2,6 +2,7 @@ package it.polito.wa2project.wa2projectcatalogservice.services.restServices
 
 import it.polito.wa2project.wa2projectcatalogservice.domain.coreography.OrderRequest
 import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderDTO
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderStatus
 import it.polito.wa2project.wa2projectcatalogservice.repositories.UserRepository
 import it.polito.wa2project.wa2projectcatalogservice.repositories.coreography.OrderRequestRepository
 import org.springframework.boot.web.client.RestTemplateBuilder
@@ -103,6 +104,9 @@ class OrderRestService(
         if(orderRequest.buyerId != userId)
             return ResponseEntity("You can't delete this order because you haven't bought it", HttpStatus.FORBIDDEN)
 
+        if(orderRequest.status == OrderStatus.CANCELED)
+            return ResponseEntity("You can't delete this order because you have already deleted it", HttpStatus.FORBIDDEN)
+
         var deleted = false
 
         for (i in 0..4) {
@@ -153,6 +157,7 @@ class OrderRestService(
 
             try{
                 deleteOrderFromService(orderRequest)
+                deleted = true
             }
             catch(e: Exception){
                 //Third step failed so undo what I have done, wait 5 seconds and retry
@@ -161,16 +166,18 @@ class OrderRestService(
                 Thread.sleep(5000)
                 continue
             }
-
-            deleted = true
         }
 
         println("DELETE ORDER: Deletion completed: $deleted")
 
-        return if (deleted)
+        return if (deleted) {
+            orderRequest.status = OrderStatus.CANCELED
+            orderRequestRepository.save(orderRequest)
+
             ResponseEntity("Your order has been deleted", HttpStatus.OK)
+        }
         else
-            ResponseEntity("We couldn't delete your order, try again", HttpStatus.BAD_REQUEST)
+            ResponseEntity("We couldn't delete your order, try again", HttpStatus.INTERNAL_SERVER_ERROR)
     }
 
     /*private fun reloadWarehouse(orderRequest: OrderRequest): Boolean{
