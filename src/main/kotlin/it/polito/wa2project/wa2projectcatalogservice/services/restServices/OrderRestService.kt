@@ -147,7 +147,7 @@ class OrderRestService(
     private fun reloadWarehouse(orderRequest: OrderRequest): Boolean{
         val response = warehouseRestService.reloadProduct(orderRequest.uuid)
 
-        return response.statusCode != HttpStatus.OK
+        return response.statusCode == HttpStatus.OK
     }
 
     private fun unloadWarehouse(orderRequest: OrderRequest){
@@ -160,13 +160,13 @@ class OrderRestService(
     private fun refundUser(orderRequest: OrderRequest): Boolean{
         val response = walletRestService.refundWallet(orderRequest.uuid)
 
-        return response.statusCode != HttpStatus.OK
+        return response.statusCode == HttpStatus.OK
     }
 
     private fun undoRefundUser(orderRequest: OrderRequest): Boolean{
         val response = walletRestService.undoRefundUser(orderRequest.uuid)
 
-        return response.statusCode != HttpStatus.OK
+        return response.statusCode == HttpStatus.OK
     }
 
     private fun deleteOrderFromService(orderRequest: OrderRequest): Boolean{
@@ -180,6 +180,6 @@ class OrderRestService(
 
         println("DELETE ORDER FROM SERVICE: Order service response $responseEntity")
 
-        return responseEntity.statusCode != HttpStatus.OK
+        return responseEntity.statusCode == HttpStatus.OK
     }
 }
