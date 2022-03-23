@@ -106,7 +106,7 @@ class OrderRestService(
         var deleted = false
 
         for (i in 0..4) {
-            val step1 = reloadWarehouse(orderRequest)
+            /*val step1 = reloadWarehouse(orderRequest)
             if(!step1) {
                 //First step failed so undo what I have done, wait 5 seconds and retry
                 unloadWarehouse(orderRequest)
@@ -129,6 +129,37 @@ class OrderRestService(
                 undoRefundUser(orderRequest)
                 Thread.sleep(5000)
                 continue
+            }*/
+
+            try{
+                reloadWarehouse(orderRequest)
+            }
+            catch(e: Exception) {
+                //First step failed so undo what I have done, wait 5 seconds and retry
+                unloadWarehouse(orderRequest)
+                Thread.sleep(5000)
+                continue
+            }
+
+            try{
+                refundUser(orderRequest)
+            }
+            catch(e: Exception){
+                //Second step failed so undo what I have done, wait 5 seconds and retry
+                unloadWarehouse(orderRequest)
+                Thread.sleep(5000)
+                continue
+            }
+
+            try{
+                deleteOrderFromService(orderRequest)
+            }
+            catch(e: Exception){
+                //Third step failed so undo what I have done, wait 5 seconds and retry
+                unloadWarehouse(orderRequest)
+                undoRefundUser(orderRequest)
+                Thread.sleep(5000)
+                continue
             }
 
             deleted = true
@@ -136,15 +167,13 @@ class OrderRestService(
 
         println("DELETE ORDER: Deletion completed: $deleted")
 
-        val message = if (deleted)
-            "Your order has been deleted"
+        return if (deleted)
+            ResponseEntity("Your order has been deleted", HttpStatus.OK)
         else
-            "We couldn't delete your order, try again"
-
-        return ResponseEntity(message, HttpStatus.OK)
+            ResponseEntity("We couldn't delete your order, try again", HttpStatus.BAD_REQUEST)
     }
 
-    private fun reloadWarehouse(orderRequest: OrderRequest): Boolean{
+    /*private fun reloadWarehouse(orderRequest: OrderRequest): Boolean{
         val response = warehouseRestService.reloadProduct(orderRequest.uuid)
 
         return response.statusCode == HttpStatus.OK
@@ -167,6 +196,25 @@ class OrderRestService(
         val response = walletRestService.undoRefundUser(orderRequest.uuid)
 
         return response.statusCode == HttpStatus.OK
+    }*/
+
+    private fun reloadWarehouse(orderRequest: OrderRequest){
+        warehouseRestService.reloadProduct(orderRequest.uuid)
+    }
+
+    private fun unloadWarehouse(orderRequest: OrderRequest){
+        warehouseRestService.undoReloadProduct(orderRequest.uuid)
+
+        //Assuming that everything goes well calling this function
+        //return response.statusCode != HttpStatus.OK
+    }
+
+    private fun refundUser(orderRequest: OrderRequest){
+        walletRestService.refundWallet(orderRequest.uuid)
+    }
+
+    private fun undoRefundUser(orderRequest: OrderRequest){
+        walletRestService.undoRefundUser(orderRequest.uuid)
     }
 
     private fun deleteOrderFromService(orderRequest: OrderRequest): Boolean{
