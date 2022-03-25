@@ -5,6 +5,7 @@ import io.debezium.embedded.Connect
 import io.debezium.engine.DebeziumEngine
 import io.debezium.engine.RecordChangeEvent
 import io.debezium.engine.format.ChangeEventFormat
+import it.polito.wa2project.wa2projectcatalogservice.dto.order.OrderStatus
 import lombok.extern.slf4j.Slf4j
 import org.apache.commons.lang3.tuple.Pair
 import org.apache.kafka.connect.data.Field
@@ -84,8 +85,8 @@ class OutboxListener(
                     //NOTA: i campi sono scritti tutti in minuscolo col _ al posto della maiuscola,
                     // quindi payload["buyer_id"] per esempio
 
-                    //Se orderRequest cambia aggiungendo l'orderId allora non devo fare niente
-                    if(payload["order_id"] != null)
+                    //Se orderRequest cambia aggiungendo l'orderId o mettendolo a FAILED allora non devo fare niente
+                    if(payload["order_id"] != null || payload["order_status"] == OrderStatus.FAILED)
                         return
 
                     val orderRequestDTO = choreographyCatalogService.getOrderByUuid(payload["uuid"] as String)
