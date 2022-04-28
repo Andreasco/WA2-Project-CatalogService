@@ -26,7 +26,8 @@ class ChoreographyCatalogService(
     ) {
 
     fun getOrderByUuid(orderRequestUuid: String): OrderRequestDTO {
-        return orderRequestRepository.findByUuid(orderRequestUuid)!!.toOrderRequestDTO()
+        val orderRequest: OrderRequest = orderRequestRepository.findByUuid(orderRequestUuid)!!
+        return orderRequest.toOrderRequestDTO()
     }
 
     fun createOrder(orderRequest: OrderRequestDTO): OrderRequestDTO {

@@ -9,6 +9,14 @@ plugins {
     kotlin("plugin.allopen") version "1.4.31"
 }
 
+/*sun.tools.jar.resources.jar {
+    manifest {
+        attributes(
+            'Main-Class': 'it.polito.wa2project.wa2projectcatalogservice.Wa2ProjectCatalogServiceApplication.kt'
+        )
+    }
+}*/
+
 allOpen{
     annotation("javax.persistence.Entity")
     annotation("javax.persistence.Embeddable")
